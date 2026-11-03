@@ -1,0 +1,10 @@
+# Local environment for docker-compose
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
