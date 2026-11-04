@@ -1,0 +1,15 @@
+# Go test artifacts
+*.exe
+*.test
+*.out
+coverage.*
+!coverage.go
+*.coverprofile
+profile.cov
+
+# Service binaries built by go build
+/account/account
+/catalogue/catalogue
+/transaction/transaction
+/bank-communication/bank-communication
+/bank-simulator/bank-simulator
