@@ -1,4 +1,4 @@
-# Local environment for docker-compose
+# Local environment for Docker Compose
 .env
 
 # IDE
