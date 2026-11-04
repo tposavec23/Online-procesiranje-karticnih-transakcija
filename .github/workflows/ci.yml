@@ -55,3 +55,20 @@ jobs:
     timeout-minutes: 5
     steps:
       - run: test "${{ needs.go-service.result }}" = success
+
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew assembleDebug lintDebug
