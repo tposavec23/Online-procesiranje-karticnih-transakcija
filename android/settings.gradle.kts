@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "SevenPay"
 include(":app")
+include(":core")
