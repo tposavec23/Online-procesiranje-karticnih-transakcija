@@ -1,0 +1,10 @@
+package hr.foi.air.sevenpay.ui.catalog
+
+import hr.foi.air.sevenpay.core.model.Article
+
+sealed interface CatalogUiState {
+    data object Loading : CatalogUiState
+    data class Success(val articles: List<Article>) : CatalogUiState
+    data object Empty : CatalogUiState
+    data class Error(val message: String) : CatalogUiState
+}
