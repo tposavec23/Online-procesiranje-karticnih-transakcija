@@ -25,3 +25,5 @@ services/
 | transaction | Zaprimanje transakcija, prepoznavanje banke i routanje, spremanje i dohvat transakcija |
 | bank-communication | Komunikacija s bankom: Banka 1 preko ISO8583 socketa, Banka 2 preko HTTP API-ja |
 | bank-simulator | Simulator banke koji odobrava ili odbija transakcije |
+
+Testni redak za probni pull request.
