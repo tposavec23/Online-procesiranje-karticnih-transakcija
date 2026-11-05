@@ -8,13 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
+import hr.foi.air.sevenpay.ui.catalog.CatalogScreen
+import hr.foi.air.sevenpay.ui.catalog.CatalogUiState
+import hr.foi.air.sevenpay.ui.catalog.sampleArticles
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,15 +43,17 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
-                        Text(
-                            text = when (selectedItem) {
-                                0 -> "Artikli"
-                                1 -> "Košarica"
-                                2 -> "Transakcije"
-                                3 -> "Račun"
-                                else -> "Artikli"
-                            }
-                        )
+                        when (selectedItem) {
+                            0 -> CatalogScreen(
+                                state = CatalogUiState.Success(sampleArticles),
+                                onArticleClick = {},
+                                onRetry = {}
+                            )
+                            1 -> Text("Košarica")
+                            2 -> Text("Transakcije")
+                            3 -> Text("Račun")
+                            else -> Text("Artikli")
+                        }
                     }
                 }
             }
