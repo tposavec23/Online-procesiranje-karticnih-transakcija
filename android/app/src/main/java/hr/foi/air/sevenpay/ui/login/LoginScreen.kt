@@ -209,7 +209,7 @@ private fun LoginScreenErrorPreview() {
             LoginUiState(
                 username = "akovac",
                 password = "pogresna",
-                errorMessage = "Pogrešno korisničko ime ili lozinka. Pokušaj ponovno."
+                errorMessage = LoginErrorMessages.INVALID_CREDENTIALS
             ),
             {}, {}, {}
         )
