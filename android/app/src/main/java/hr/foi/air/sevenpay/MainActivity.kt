@@ -1,3 +1,4 @@
+
 package hr.foi.air.sevenpay
 
 import android.os.Bundle
@@ -13,10 +14,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
 import hr.foi.air.sevenpay.ui.catalog.CatalogScreen
-import hr.foi.air.sevenpay.ui.catalog.CatalogUiState
-import hr.foi.air.sevenpay.ui.catalog.sampleArticles
+import hr.foi.air.sevenpay.ui.catalog.CatalogViewModel
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
 
 class MainActivity : ComponentActivity() {
@@ -44,11 +46,20 @@ class MainActivity : ComponentActivity() {
                             .padding(innerPadding)
                     ) {
                         when (selectedItem) {
-                            0 -> CatalogScreen(
-                                state = CatalogUiState.Success(sampleArticles),
-                                onArticleClick = {},
-                                onRetry = {}
-                            )
+                            0 -> {
+                                val catalogViewModel: CatalogViewModel = viewModel()
+                                val state by catalogViewModel.state.collectAsStateWithLifecycle()
+
+                                CatalogScreen(
+                                    state = state,
+                                    onArticleClick = { article ->
+                                        // Prikaz detalja artikla dodajemo kasnije
+                                    },
+                                    onRetry = {
+                                        catalogViewModel.loadArticles()
+                                    }
+                                )
+                            }
                             1 -> Text("Košarica")
                             2 -> Text("Transakcije")
                             3 -> Text("Račun")
