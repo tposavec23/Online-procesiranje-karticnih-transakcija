@@ -1,4 +1,4 @@
-package article
+package catalogue
 
 import (
 	"encoding/json"
@@ -6,22 +6,21 @@ import (
 	"net/http"
 )
 
-// Handler je HTTP handler za artikle. On koristi Service za dohvat podataka i vraća ih kao JSON.
+// Handler translates HTTP requests into service calls.
 type Handler struct {
-	service Service
+	service *ArticleService
 }
 
-func NewHandler(service Service) *Handler {
+func NewHandler(service *ArticleService) *Handler {
 	return &Handler{service: service}
 }
 
-// RegisterRoutes registrira rute za artikle na dani ServeMux. Trenutno registrira samo GET /api/articles.
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/articles", h.getArticles)
 }
 
 func (h *Handler) getArticles(w http.ResponseWriter, r *http.Request) {
-	articles, err := h.service.GetAll(r.Context())
+	articles, err := h.service.fetchAll(r.Context())
 	if err != nil {
 		log.Printf("get articles: %v", err)
 		http.Error(w, "failed to fetch articles", http.StatusInternalServerError)

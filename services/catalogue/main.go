@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/jackc/pgx/v5/pgxpool"
-
-	"sevenpay/services/catalogue/internal/article"
+	"sevenpay/services/catalogue/internal/catalogue"
 	"sevenpay/services/catalogue/internal/config"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func main() {
@@ -31,9 +31,9 @@ func main() {
 	}
 
 	// Repozitorij, servis i handler za artikle. Ovdje se povezuju slojevi aplikacije.
-	repo := article.NewPostgresRepository(db)
-	svc := article.NewService(repo)
-	handler := article.NewHandler(svc)
+	repo := catalogue.NewArticleRepository(db)
+	svc := catalogue.NewArticleService(repo)
+	handler := catalogue.NewHandler(svc)
 
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)
