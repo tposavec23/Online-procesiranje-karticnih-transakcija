@@ -33,6 +33,7 @@ import hr.foi.air.sevenpay.ui.theme.Rub
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
 import hr.foi.air.sevenpay.ui.theme.SporedniTekst
 import java.util.Locale
+import java.math.BigDecimal
 
 private const val LOW_STOCK_THRESHOLD = 2
 
@@ -84,7 +85,7 @@ fun ArticleCard(
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = String.format(Locale.GERMANY, "%.2f €", article.price),
+                    text = String.format(Locale.GERMANY, "%.2f €", BigDecimal.valueOf(article.price, 2)),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
