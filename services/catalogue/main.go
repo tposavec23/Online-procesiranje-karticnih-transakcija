@@ -1,22 +1,43 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"net/http"
-	"os"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+
+	"sevenpay/services/catalogue/internal/article"
+	"sevenpay/services/catalogue/internal/config"
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		log.Fatal("PORT is not set")
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("config: %v", err)
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello from catalogue service")
-	})
+	ctx := context.Background()
 
-	log.Printf("catalogue service listening on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	db, err := pgxpool.New(ctx, cfg.DatabaseURL)
+	if err != nil {
+		log.Fatalf("database: %v", err)
+	}
+	defer db.Close()
+
+	// Error ako se ne može pingati baza, aplikacija se ne može pokrenuti jer je to kritična greška.
+	if err := db.Ping(ctx); err != nil {
+		log.Fatalf("database ping: %v", err)
+	}
+
+	// Repozitorij, servis i handler za artikle. Ovdje se povezuju slojevi aplikacije.
+	repo := article.NewPostgresRepository(db)
+	svc := article.NewService(repo)
+	handler := article.NewHandler(svc)
+
+	mux := http.NewServeMux()
+	handler.RegisterRoutes(mux)
+
+	log.Printf("catalogue service listening on port %s", cfg.Port)
+	log.Fatal(http.ListenAndServe(":"+cfg.Port, mux))
 }
