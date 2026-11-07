@@ -33,5 +33,9 @@ func (s *AuthService) login(ctx context.Context, username, password string) (Use
 		return User{}, errInvalidCredentials
 	}
 
+	if !u.Active {
+		return User{}, errInvalidCredentials
+	}
+
 	return u, nil
 }
