@@ -25,12 +25,10 @@ func main() {
 	}
 	defer db.Close()
 
-	// Bez baze servis ne može raditi, pa se ne pokreće ako baza nije dostupna.
 	if err := db.Ping(ctx); err != nil {
 		log.Fatalf("database ping: %v", err)
 	}
 
-	// Povezivanje slojeva: repozitorij dobiva bazu, servis repozitorij, a handler servis.
 	repo := account.NewUserRepository(db)
 	auth := account.NewAuthService(repo)
 	handler := account.NewHandler(auth)

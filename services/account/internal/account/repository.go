@@ -9,10 +9,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// errUserNotFound se vraća kada u bazi ne postoji korisnik s traženim korisničkim imenom.
 var errUserNotFound = errors.New("user not found")
 
-// UserRepository dohvaća korisnike iz baze podataka.
 type UserRepository struct {
 	db *pgxpool.Pool
 }
@@ -21,7 +19,6 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-// findByUsername dohvaća korisnika prema korisničkom imenu.
 func (r *UserRepository) findByUsername(ctx context.Context, username string) (User, error) {
 	var u User
 	err := r.db.QueryRow(ctx, `

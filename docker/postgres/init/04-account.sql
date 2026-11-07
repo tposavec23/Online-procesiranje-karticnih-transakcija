@@ -5,5 +5,5 @@ CREATE TABLE account.users (
     role varchar(20) NOT NULL CHECK (role IN ('MERCHANT', 'ADMIN')),
     active boolean NOT NULL DEFAULT true,
     created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    pdated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
