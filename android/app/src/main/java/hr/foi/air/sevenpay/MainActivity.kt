@@ -1,4 +1,3 @@
-
 package hr.foi.air.sevenpay
 
 import android.os.Bundle
@@ -57,6 +56,9 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onRetry = {
                                         catalogViewModel.loadArticles()
+                                    },
+                                    onLoadMore = {
+                                        catalogViewModel.loadMore()
                                     }
                                 )
                             }

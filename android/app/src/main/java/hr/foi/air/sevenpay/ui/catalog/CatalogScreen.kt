@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,6 +36,7 @@ fun CatalogScreen(
     state: CatalogUiState,
     onArticleClick: (Article) -> Unit,
     onRetry: () -> Unit,
+    onLoadMore: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -94,7 +96,47 @@ fun CatalogScreen(
                             onClick = { onArticleClick(article) }
                         )
                     }
+                    if (state.hasMore) {
+                        item {
+                            LoadMoreFooter(
+                                isLoading = state.isLoadingMore,
+                                failed = state.loadMoreFailed,
+                                onClick = onLoadMore
+                            )
+                        }
+                    }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadMoreFooter(
+    isLoading: Boolean,
+    failed: Boolean,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (failed) {
+            Text(
+                "Dohvat sljedećih artikala nije uspio.",
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+        if (isLoading) {
+            CircularProgressIndicator(color = Malina)
+        } else {
+            Button(
+                onClick = onClick,
+                colors = ButtonDefaults.buttonColors(containerColor = Malina)
+            ) {
+                Text("Prikaži više")
             }
         }
     }
@@ -114,7 +156,7 @@ private fun CenteredContent(content: @Composable () -> Unit) {
 @Composable
 private fun CatalogScreenPreview() {
     SevenPayTheme {
-        CatalogScreen(CatalogUiState.Success(sampleArticles), {}, {})
+        CatalogScreen(CatalogUiState.Success(sampleArticles, hasMore = true), {}, {}, {})
     }
 }
 
@@ -122,7 +164,7 @@ private fun CatalogScreenPreview() {
 @Composable
 private fun CatalogScreenEmptyPreview() {
     SevenPayTheme {
-        CatalogScreen(CatalogUiState.Empty, {}, {})
+        CatalogScreen(CatalogUiState.Empty, {}, {}, {})
     }
 }
 
@@ -130,6 +172,6 @@ private fun CatalogScreenEmptyPreview() {
 @Composable
 private fun CatalogScreenErrorPreview() {
     SevenPayTheme {
-        CatalogScreen(CatalogUiState.Error("Dohvat artikala nije uspio."), {}, {})
+        CatalogScreen(CatalogUiState.Error("Dohvat artikala nije uspio."), {}, {}, {})
     }
 }
