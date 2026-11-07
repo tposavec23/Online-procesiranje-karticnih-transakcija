@@ -8,5 +8,6 @@ class CatalogServiceImpl(
     private val api: CatalogApi = ApiClient.catalogApi
 ) : CatalogService {
 
-    override suspend fun getArticles(): List<Article> = api.getArticles()
+    override suspend fun getArticles(limit: Int, offset: Int): List<Article> =
+        api.getArticles(limit, offset)
 }
