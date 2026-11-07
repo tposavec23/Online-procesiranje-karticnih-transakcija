@@ -14,8 +14,8 @@ func NewArticleService(repo *ArticleRepository) *ArticleService {
 	return &ArticleService{repo: repo}
 }
 
-func (s *ArticleService) fetchAll(ctx context.Context) ([]Article, error) {
-	articles, err := s.repo.fetchAll(ctx)
+func (s *ArticleService) fetchAll(ctx context.Context, limit, offset int) ([]Article, error) {
+	articles, err := s.repo.fetchAll(ctx, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("fetch all articles: %w", err)
 	}
