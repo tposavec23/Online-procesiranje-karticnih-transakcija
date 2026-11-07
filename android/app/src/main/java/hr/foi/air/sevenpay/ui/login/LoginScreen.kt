@@ -112,7 +112,6 @@ fun LoginScreen(
             }
         }
 
-        // Pushes the footer note to the bottom of the screen.
         Spacer(Modifier.weight(1f))
         Text(
             "Račun ti otvara administrator.",
