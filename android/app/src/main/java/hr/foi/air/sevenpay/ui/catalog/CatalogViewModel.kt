@@ -25,11 +25,14 @@ class CatalogViewModel(
         viewModelScope.launch {
             _state.value = CatalogUiState.Loading
             _state.value = try {
-                val articles = catalogService.getArticles()
+                val articles = catalogService.getArticles(PAGE_SIZE, 0)
                 if (articles.isEmpty()) {
                     CatalogUiState.Empty
                 } else {
-                    CatalogUiState.Success(articles)
+                    CatalogUiState.Success(
+                        articles = articles,
+                        hasMore = articles.size == PAGE_SIZE
+                    )
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -37,5 +40,30 @@ class CatalogViewModel(
                 CatalogUiState.Error("Dohvat artikala nije uspio. Provjerite vezu i pokušajte ponovno.")
             }
         }
+    }
+
+    fun loadMore() {
+        val current = _state.value as? CatalogUiState.Success ?: return
+        if (!current.hasMore || current.isLoadingMore) return
+
+        _state.value = current.copy(isLoadingMore = true, loadMoreFailed = false)
+
+        viewModelScope.launch {
+            try {
+                val next = catalogService.getArticles(PAGE_SIZE, current.articles.size)
+                _state.value = CatalogUiState.Success(
+                    articles = current.articles + next,
+                    hasMore = next.size == PAGE_SIZE
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _state.value = current.copy(isLoadingMore = false, loadMoreFailed = true)
+            }
+        }
+    }
+
+    private companion object {
+        const val PAGE_SIZE = 10
     }
 }

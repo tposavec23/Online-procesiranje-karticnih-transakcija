@@ -1,3 +1,4 @@
+
 package hr.foi.air.sevenpay
 
 import android.os.Bundle
@@ -81,6 +82,9 @@ private fun MerchantHome() {
                         },
                         onRetry = {
                             catalogViewModel.loadArticles()
+                        },
+                        onLoadMore = {
+                            catalogViewModel.loadMore()
                         }
                     )
                 }
