@@ -2,6 +2,7 @@ package hr.foi.air.sevenpay.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import hr.foi.air.sevenpay.core.network.AccountServiceImpl
 import hr.foi.air.sevenpay.core.service.AccountService
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val accountService: AccountService = SampleAccountService()
+    private val accountService: AccountService = AccountServiceImpl()
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginUiState())
