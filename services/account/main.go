@@ -1,22 +1,41 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"net/http"
-	"os"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+
+	"sevenpay/services/account/internal/account"
+	"sevenpay/services/account/internal/config"
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		log.Fatal("PORT is not set")
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("config: %v", err)
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello from account service")
-	})
+	ctx := context.Background()
 
-	log.Printf("account service listening on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	db, err := pgxpool.New(ctx, cfg.DatabaseURL)
+	if err != nil {
+		log.Fatalf("database: %v", err)
+	}
+	defer db.Close()
+
+	if err := db.Ping(ctx); err != nil {
+		log.Fatalf("database ping: %v", err)
+	}
+
+	repo := account.NewUserRepository(db)
+	auth := account.NewAuthService(repo)
+	handler := account.NewHandler(auth)
+
+	mux := http.NewServeMux()
+	handler.RegisterRoutes(mux)
+
+	log.Printf("account service listening on port %s", cfg.Port)
+	log.Fatal(http.ListenAndServe(":"+cfg.Port, mux))
 }
