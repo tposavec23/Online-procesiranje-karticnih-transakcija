@@ -16,7 +16,7 @@ func NewArticleRepository(db *pgxpool.Pool) *ArticleRepository {
 	return &ArticleRepository{db: db}
 }
 
-func (r *ArticleRepository) fetchAll(ctx context.Context) ([]Article, error) {
+func (r *ArticleRepository) fetchAll(ctx context.Context, limit, offset int) ([]Article, error) {
 	rows, err := r.db.Query(ctx, `
 		SELECT article_id,
 		       code,
@@ -25,7 +25,8 @@ func (r *ArticleRepository) fetchAll(ctx context.Context) ([]Article, error) {
 		       (price * 100)::bigint,
 		       available_quantity
 		FROM catalogue.article
-		ORDER BY code`)
+		ORDER BY code
+		LIMIT $1 OFFSET $2`, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("query articles: %w", err)
 	}
