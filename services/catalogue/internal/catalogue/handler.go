@@ -2,6 +2,7 @@ package catalogue
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -63,6 +64,10 @@ func (h *Handler) getArticle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	article, err := h.service.fetchByID(r.Context(), id)
+	if errors.Is(err, errArticleNotFound) {
+		http.Error(w, "article not found", http.StatusNotFound)
+		return
+	}
 	if err != nil {
 		log.Printf("get article %d: %v", id, err)
 		http.Error(w, "failed to fetch article", http.StatusInternalServerError)
