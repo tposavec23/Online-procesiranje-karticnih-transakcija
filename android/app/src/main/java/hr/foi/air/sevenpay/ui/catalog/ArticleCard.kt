@@ -23,24 +23,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.foi.air.sevenpay.core.model.Article
-import hr.foi.air.sevenpay.ui.theme.Dostupno
-import hr.foi.air.sevenpay.ui.theme.DostupnoPozadina
-import hr.foi.air.sevenpay.ui.theme.MaloNaZalihi
-import hr.foi.air.sevenpay.ui.theme.MaloNaZalihiPozadina
-import hr.foi.air.sevenpay.ui.theme.Nedostupno
-import hr.foi.air.sevenpay.ui.theme.NedostupnoPozadina
-import hr.foi.air.sevenpay.ui.theme.Rub
+import hr.foi.air.sevenpay.ui.theme.InStockText
+import hr.foi.air.sevenpay.ui.theme.InStockBackground
+import hr.foi.air.sevenpay.ui.theme.LowStockText
+import hr.foi.air.sevenpay.ui.theme.LowStockBackground
+import hr.foi.air.sevenpay.ui.theme.UnavailableText
+import hr.foi.air.sevenpay.ui.theme.UnavailableBackground
+import hr.foi.air.sevenpay.ui.theme.Border
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
-import hr.foi.air.sevenpay.ui.theme.SporedniTekst
+import hr.foi.air.sevenpay.ui.theme.SecondaryText
 import java.util.Locale
 import java.math.BigDecimal
 
 private const val LOW_STOCK_THRESHOLD = 2
 
 private enum class StockStatus(val background: Color, val textColor: Color) {
-    IN_STOCK(DostupnoPozadina, Dostupno),
-    LOW(MaloNaZalihiPozadina, MaloNaZalihi),
-    UNAVAILABLE(NedostupnoPozadina, Nedostupno)
+    IN_STOCK(InStockBackground, InStockText),
+    LOW(LowStockBackground, LowStockText),
+    UNAVAILABLE(UnavailableBackground, UnavailableText)
 }
 
 private fun stockStatus(quantity: Int) = when {
@@ -62,14 +62,14 @@ fun ArticleCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, Rub)
+        border = BorderStroke(1.dp, Border)
     ) {
         Column(Modifier.padding(16.dp)) {
             Text(
                 text = article.code,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = SporedniTekst
+                color = SecondaryText
             )
             Spacer(Modifier.height(4.dp))
             Text(
@@ -80,7 +80,7 @@ fun ArticleCard(
             Text(
                 text = article.description,
                 fontSize = 14.sp,
-                color = SporedniTekst
+                color = SecondaryText
             )
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {

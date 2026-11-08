@@ -13,10 +13,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import hr.foi.air.sevenpay.ui.theme.Malina
-import hr.foi.air.sevenpay.ui.theme.SporedniTekst
-import hr.foi.air.sevenpay.ui.theme.KremPozadina
-import hr.foi.air.sevenpay.ui.theme.SvijetlaRuza
+import hr.foi.air.sevenpay.ui.theme.Raspberry
+import hr.foi.air.sevenpay.ui.theme.SecondaryText
+import hr.foi.air.sevenpay.ui.theme.CreamBackground
+import hr.foi.air.sevenpay.ui.theme.LightRose
 
 
 @Composable
@@ -31,7 +31,7 @@ fun BottomNavigationBar(
         Triple("Račun", Icons.Outlined.AccountCircle, 3)
     )
 
-    NavigationBar(containerColor = KremPozadina) {
+    NavigationBar(containerColor = CreamBackground) {
         items.forEach { (title, icon, index) ->
             NavigationBarItem(
                 selected = selectedItem == index,
@@ -44,11 +44,11 @@ fun BottomNavigationBar(
                 },
                 label = { Text(title) },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Malina,
-                    selectedTextColor = Malina,
-                    unselectedIconColor = SporedniTekst,
-                    unselectedTextColor = SporedniTekst,
-                    indicatorColor = SvijetlaRuza
+                    selectedIconColor = Raspberry,
+                    selectedTextColor = Raspberry,
+                    unselectedIconColor = SecondaryText,
+                    unselectedTextColor = SecondaryText,
+                    indicatorColor = LightRose
                 )
             )
         }

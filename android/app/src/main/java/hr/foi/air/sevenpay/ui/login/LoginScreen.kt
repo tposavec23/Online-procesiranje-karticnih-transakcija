@@ -37,13 +37,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import hr.foi.air.sevenpay.ui.theme.KremPozadina
-import hr.foi.air.sevenpay.ui.theme.Malina
-import hr.foi.air.sevenpay.ui.theme.PrimarniTekst
-import hr.foi.air.sevenpay.ui.theme.Rub
+import hr.foi.air.sevenpay.ui.theme.CreamBackground
+import hr.foi.air.sevenpay.ui.theme.Raspberry
+import hr.foi.air.sevenpay.ui.theme.PrimaryText
+import hr.foi.air.sevenpay.ui.theme.Border
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
-import hr.foi.air.sevenpay.ui.theme.SporedniTekst
-import hr.foi.air.sevenpay.ui.theme.SvijetlaRuza
+import hr.foi.air.sevenpay.ui.theme.SecondaryText
+import hr.foi.air.sevenpay.ui.theme.LightRose
 
 @Composable
 fun LoginScreen(
@@ -58,14 +58,14 @@ fun LoginScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(KremPozadina)
+            .background(CreamBackground)
             .padding(horizontal = 24.dp, vertical = 32.dp)
     ) {
         AppLogo()
         Spacer(Modifier.height(48.dp))
 
-        Text("Prijava", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = PrimarniTekst)
-        Text("Prijavi se svojim korisničkim podacima.", fontSize = 14.sp, color = SporedniTekst)
+        Text("Prijava", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = PrimaryText)
+        Text("Prijavi se svojim korisničkim podacima.", fontSize = 14.sp, color = SecondaryText)
         Spacer(Modifier.height(24.dp))
 
         state.errorMessage?.let {
@@ -100,7 +100,7 @@ fun LoginScreen(
             onClick = onLoginClick,
             enabled = state.canSubmit,
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Malina),
+            colors = ButtonDefaults.buttonColors(containerColor = Raspberry),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp)
@@ -116,7 +116,7 @@ fun LoginScreen(
         Text(
             "Račun ti otvara administrator.",
             fontSize = 13.sp,
-            color = SporedniTekst,
+            color = SecondaryText,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
     }
@@ -128,13 +128,13 @@ private fun AppLogo() {
         Box(
             modifier = Modifier
                 .size(60.dp)
-                .background(Malina, RoundedCornerShape(12.dp)),
+                .background(Raspberry, RoundedCornerShape(12.dp)),
             contentAlignment = Alignment.Center
         ) {
             Text("Logo", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
         Spacer(Modifier.width(12.dp))
-        Text("7pay", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = PrimarniTekst)
+        Text("7pay", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = PrimaryText)
     }
 }
 
@@ -143,7 +143,7 @@ private fun ErrorBanner(message: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(SvijetlaRuza, RoundedCornerShape(12.dp))
+            .background(LightRose, RoundedCornerShape(12.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -165,13 +165,13 @@ private fun LoginField(
     isPassword: Boolean = false
 ) {
     Column {
-        Text(label, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = PrimarniTekst)
+        Text(label, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = PrimaryText)
         Spacer(Modifier.height(6.dp))
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            placeholder = { Text(placeholder, color = SporedniTekst) },
-            leadingIcon = { Icon(icon, contentDescription = null, tint = SporedniTekst) },
+            placeholder = { Text(placeholder, color = SecondaryText) },
+            leadingIcon = { Icon(icon, contentDescription = null, tint = SecondaryText) },
             isError = isError,
             enabled = enabled,
             singleLine = true,
@@ -184,8 +184,8 @@ private fun LoginField(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
                 disabledContainerColor = Color.White,
-                unfocusedBorderColor = Rub,
-                focusedBorderColor = Malina
+                unfocusedBorderColor = Border,
+                focusedBorderColor = Raspberry
             ),
             modifier = Modifier.fillMaxWidth()
         )

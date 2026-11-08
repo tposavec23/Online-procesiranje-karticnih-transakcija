@@ -6,29 +6,29 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val SlatkoColorScheme = lightColorScheme(
-    primary = Malina,
+private val LightColorScheme = lightColorScheme(
+    primary = Raspberry,
     onPrimary = Color.White,
 
-    primaryContainer = SvijetlaRuza,
-    onPrimaryContainer = TamnaMalina,
+    primaryContainer = LightRose,
+    onPrimaryContainer = DarkRaspberry,
 
-    secondary = TamnaMalina,
+    secondary = DarkRaspberry,
     onSecondary = Color.White,
 
-    tertiary = HeroBreskva,
-    onTertiary = PrimarniTekst,
+    tertiary = HeroPeach,
+    onTertiary = PrimaryText,
 
-    background = KremPozadina,
-    onBackground = PrimarniTekst,
+    background = CreamBackground,
+    onBackground = PrimaryText,
 
-    surface = KremPozadina,
-    onSurface = PrimarniTekst,
+    surface = CreamBackground,
+    onSurface = PrimaryText,
 
-    surfaceVariant = SvijetlaRuza,
-    onSurfaceVariant = SporedniTekst,
+    surfaceVariant = LightRose,
+    onSurfaceVariant = SecondaryText,
 
-    outline = Rub,
+    outline = Border,
     error = Color(0xFFB3261E)
 )
 
@@ -37,7 +37,7 @@ fun SevenPayTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colorScheme = SlatkoColorScheme,
+        colorScheme = LightColorScheme,
         typography = Typography,
         content = content
     )
