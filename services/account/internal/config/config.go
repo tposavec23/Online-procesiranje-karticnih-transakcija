@@ -5,13 +5,13 @@ import (
 	"os"
 )
 
-// Config sadrži postavke potrebne za pokretanje servisa.
+// Config contains the settings required to run the service.
 type Config struct {
 	DatabaseURL string
 	Port        string
 }
 
-// Load čita postavke iz varijabli okoline i vraća grešku ako neka nedostaje.
+// Load reads the settings from environment variables and returns an error if any of them is missing.
 func Load() (Config, error) {
 	port := os.Getenv("PORT")
 	if port == "" {

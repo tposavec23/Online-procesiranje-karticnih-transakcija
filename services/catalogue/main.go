@@ -25,12 +25,12 @@ func main() {
 	}
 	defer db.Close()
 
-	// Error ako se ne može pingati baza, aplikacija se ne može pokrenuti jer je to kritična greška.
+	// Error if the database cannot be pinged; the application cannot start because this is a critical error.
 	if err := db.Ping(ctx); err != nil {
 		log.Fatalf("database ping: %v", err)
 	}
 
-	// Repozitorij, servis i handler za artikle. Ovdje se povezuju slojevi aplikacije.
+	// Wire the article repository, service and handler together.
 	repo := catalogue.NewArticleRepository(db)
 	svc := catalogue.NewArticleService(repo)
 	handler := catalogue.NewHandler(svc)
