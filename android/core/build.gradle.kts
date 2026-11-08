@@ -29,9 +29,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 24
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = 26
 
         buildConfigField("String", "CATALOG_BASE_URL", "\"${backendUrl("CATALOG_BASE_URL", "http://10.0.2.2:8081/")}\"")
         buildConfigField("String", "ACCOUNT_BASE_URL", "\"${backendUrl("ACCOUNT_BASE_URL", "http://10.0.2.2:8082/")}\"")
@@ -51,10 +49,4 @@ android {
 dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
 }
