@@ -18,14 +18,16 @@ func NewArticleRepository(db *pgxpool.Pool) *ArticleRepository {
 
 func (r *ArticleRepository) fetchAll(ctx context.Context, limit, offset int) ([]Article, error) {
 	rows, err := r.db.Query(ctx, `
-		SELECT article_id,
-		       code,
-		       name,
-		       COALESCE(description, ''),
-		       (price * 100)::bigint,
-		       available_quantity
-		FROM catalogue.article
-		ORDER BY code
+		SELECT a.article_id,
+		       a.code,
+		       a.name,
+		       COALESCE(a.description, ''),
+		       c.name,
+		       (a.price * 100)::bigint,
+		       a.available_quantity
+		FROM catalogue.article a
+		JOIN catalogue.category c ON c.category_id = a.category_id
+		ORDER BY a.code
 		LIMIT $1 OFFSET $2`, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("query articles: %w", err)
@@ -35,7 +37,7 @@ func (r *ArticleRepository) fetchAll(ctx context.Context, limit, offset int) ([]
 	var articles []Article
 	for rows.Next() {
 		var a Article
-		if err := rows.Scan(&a.ID, &a.Code, &a.Name, &a.Description, &a.Price, &a.AvailableQuantity); err != nil {
+		if err := rows.Scan(&a.ID, &a.Code, &a.Name, &a.Description, &a.Category, &a.Price, &a.AvailableQuantity); err != nil {
 			return nil, fmt.Errorf("scan article: %w", err)
 		}
 		articles = append(articles, a)
