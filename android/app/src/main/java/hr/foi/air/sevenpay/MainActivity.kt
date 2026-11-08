@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SevenPayTheme {
-                val loginViewModel: LoginViewModel = viewModel()
+                val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
                 val loginState by loginViewModel.state.collectAsStateWithLifecycle()
 
                 when (loginState.loggedInUser?.role) {
@@ -72,7 +72,7 @@ private fun MerchantHome() {
         ) {
             when (selectedItem) {
                 0 -> {
-                    val catalogViewModel: CatalogViewModel = viewModel()
+                    val catalogViewModel: CatalogViewModel = viewModel(factory = CatalogViewModel.Factory)
                     val state by catalogViewModel.state.collectAsStateWithLifecycle()
 
                     CatalogScreen(

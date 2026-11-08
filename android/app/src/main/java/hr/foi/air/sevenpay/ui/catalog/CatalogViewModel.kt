@@ -1,9 +1,13 @@
 package hr.foi.air.sevenpay.ui.catalog
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import hr.foi.air.sevenpay.core.service.CatalogService
-import hr.foi.air.sevenpay.core.service.CatalogServiceImpl
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import hr.foi.air.sevenpay.SevenPayApplication
+import hr.foi.air.sevenpay.core.data.CatalogRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CatalogViewModel(
-    private val catalogService: CatalogService = CatalogServiceImpl()
+    private val catalogRepository: CatalogRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<CatalogUiState>(CatalogUiState.Loading)
@@ -25,7 +29,7 @@ class CatalogViewModel(
         viewModelScope.launch {
             _state.value = CatalogUiState.Loading
             _state.value = try {
-                val articles = catalogService.getArticles(PAGE_SIZE, 0)
+                val articles = catalogRepository.getArticles(PAGE_SIZE, 0)
                 if (articles.isEmpty()) {
                     CatalogUiState.Empty
                 } else {
@@ -50,7 +54,7 @@ class CatalogViewModel(
 
         viewModelScope.launch {
             try {
-                val next = catalogService.getArticles(PAGE_SIZE, current.articles.size)
+                val next = catalogRepository.getArticles(PAGE_SIZE, current.articles.size)
                 _state.value = CatalogUiState.Success(
                     articles = current.articles + next,
                     hasMore = next.size == PAGE_SIZE
@@ -63,7 +67,14 @@ class CatalogViewModel(
         }
     }
 
-    private companion object {
-        const val PAGE_SIZE = 10
+    companion object {
+        private const val PAGE_SIZE = 10
+
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = this[APPLICATION_KEY] as SevenPayApplication
+                CatalogViewModel(application.container.catalogRepository)
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@ object LoginErrorMessages {
     const val NO_CONNECTION = "Prijava trenutno nije moguća. Provjeri internetsku vezu i pokušaj ponovno."
     const val UNKNOWN = "Došlo je do pogreške pri prijavi. Pokušaj ponovno."
 
-    // Maps an error thrown by AccountService to the message the user should see.
+    // Maps an error thrown by AccountRepository to the message the user should see.
     fun from(error: Throwable): String = when (error) {
         is InvalidCredentialsException -> INVALID_CREDENTIALS
         is IOException -> NO_CONNECTION
