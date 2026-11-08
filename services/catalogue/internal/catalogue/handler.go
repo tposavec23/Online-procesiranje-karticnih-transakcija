@@ -50,10 +50,7 @@ func (h *Handler) listArticles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if err := json.NewEncoder(w).Encode(articles); err != nil {
-		log.Printf("encode articles: %v", err)
-	}
+	writeJSON(w, articles)
 }
 
 func (h *Handler) getArticle(w http.ResponseWriter, r *http.Request) {
@@ -74,17 +71,20 @@ func (h *Handler) getArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	if err := json.NewEncoder(w).Encode(article); err != nil {
-		log.Printf("encode article: %v", err)
-	}
+	writeJSON(w, article)
 }
 
-// queryInt reads an integer query parameter, returning fallback when it is absent.
 func queryInt(r *http.Request, name string, fallback int) (int, error) {
 	value := r.URL.Query().Get(name)
 	if value == "" {
 		return fallback, nil
 	}
 	return strconv.Atoi(value)
+}
+
+func writeJSON(w http.ResponseWriter, v any) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	if err := json.NewEncoder(w).Encode(v); err != nil {
+		log.Printf("encode response: %v", err)
+	}
 }
