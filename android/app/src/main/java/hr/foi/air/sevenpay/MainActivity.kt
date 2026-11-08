@@ -11,7 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.core.model.Role
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
+import hr.foi.air.sevenpay.navigation.MerchantTab
 import hr.foi.air.sevenpay.ui.catalog.CatalogScreen
 import hr.foi.air.sevenpay.ui.catalog.CatalogViewModel
 import hr.foi.air.sevenpay.ui.login.LoginScreen
@@ -52,16 +53,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun MerchantHome() {
-    var selectedItem by rememberSaveable {
-        mutableIntStateOf(0)
+    var selectedTab by rememberSaveable {
+        mutableStateOf(MerchantTab.ARTICLES)
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedItem,
-                onItemSelected = { selectedItem = it }
+                selectedTab = selectedTab,
+                onTabSelected = { selectedTab = it }
             )
         }
     ) { innerPadding ->
@@ -70,8 +71,8 @@ private fun MerchantHome() {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (selectedItem) {
-                0 -> {
+            when (selectedTab) {
+                MerchantTab.ARTICLES -> {
                     val catalogViewModel: CatalogViewModel = viewModel(factory = CatalogViewModel.Factory)
                     val state by catalogViewModel.state.collectAsStateWithLifecycle()
 
@@ -88,10 +89,7 @@ private fun MerchantHome() {
                         }
                     )
                 }
-                1 -> Text("Košarica")
-                2 -> Text("Transakcije")
-                3 -> Text("Račun")
-                else -> Text("Artikli")
+                MerchantTab.CART, MerchantTab.TRANSACTIONS, MerchantTab.ACCOUNT -> Text(selectedTab.title)
             }
         }
     }
