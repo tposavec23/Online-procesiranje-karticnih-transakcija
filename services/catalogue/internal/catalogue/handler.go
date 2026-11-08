@@ -23,11 +23,11 @@ func NewHandler(service *ArticleService) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /api/articles", h.getArticles)
+	mux.HandleFunc("GET /api/articles", h.listArticles)
 	mux.HandleFunc("GET /api/articles/{id}", h.getArticle)
 }
 
-func (h *Handler) getArticles(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) listArticles(w http.ResponseWriter, r *http.Request) {
 	limit, err := queryInt(r, "limit", defaultLimit)
 	if err != nil || limit < 1 {
 		http.Error(w, "invalid limit", http.StatusBadRequest)
@@ -45,7 +45,7 @@ func (h *Handler) getArticles(w http.ResponseWriter, r *http.Request) {
 
 	articles, err := h.service.fetchAll(r.Context(), limit, offset)
 	if err != nil {
-		log.Printf("get articles: %v", err)
+		log.Printf("list articles: %v", err)
 		http.Error(w, "failed to fetch articles", http.StatusInternalServerError)
 		return
 	}
