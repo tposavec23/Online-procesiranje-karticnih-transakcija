@@ -23,6 +23,7 @@ func NewHandler(service *ArticleService) *Handler {
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/articles", h.getArticles)
+	mux.HandleFunc("GET /api/articles/{id}", h.getArticle)
 }
 
 func (h *Handler) getArticles(w http.ResponseWriter, r *http.Request) {
@@ -51,6 +52,26 @@ func (h *Handler) getArticles(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if err := json.NewEncoder(w).Encode(articles); err != nil {
 		log.Printf("encode articles: %v", err)
+	}
+}
+
+func (h *Handler) getArticle(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || id < 1 {
+		http.Error(w, "invalid article id", http.StatusBadRequest)
+		return
+	}
+
+	article, err := h.service.fetchByID(r.Context(), id)
+	if err != nil {
+		log.Printf("get article %d: %v", id, err)
+		http.Error(w, "failed to fetch article", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	if err := json.NewEncoder(w).Encode(article); err != nil {
+		log.Printf("encode article: %v", err)
 	}
 }
 
