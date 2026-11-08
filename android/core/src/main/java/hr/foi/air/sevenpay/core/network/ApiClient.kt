@@ -8,19 +8,12 @@ object ApiClient {
     private const val BASE_URL = "http://10.0.2.2:8081/"
     private const val ACCOUNT_BASE_URL = "http://10.0.2.2:8082/"
 
-    val catalogApi: CatalogApi by lazy {
+    private fun retrofit(baseUrl: String): Retrofit =
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(CatalogApi::class.java)
-    }
 
-    val accountApi: AccountApi by lazy {
-        Retrofit.Builder()
-            .baseUrl(ACCOUNT_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(AccountApi::class.java)
-    }
+    val catalogApi: CatalogApi by lazy { retrofit(BASE_URL).create(CatalogApi::class.java) }
+    val accountApi: AccountApi by lazy { retrofit(ACCOUNT_BASE_URL).create(AccountApi::class.java) }
 }
