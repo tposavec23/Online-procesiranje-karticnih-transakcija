@@ -11,6 +11,17 @@ import (
 
 var errArticleNotFound = errors.New("article not found")
 
+const articleQuery = `
+	SELECT a.article_id,
+	       a.code,
+	       a.name,
+	       COALESCE(a.description, ''),
+	       c.name,
+	       (a.price * 100)::bigint,
+	       a.available_quantity
+	FROM catalogue.article a
+	JOIN catalogue.category c ON c.category_id = a.category_id`
+
 // ArticleRepository reads articles from PostgreSQL.
 type ArticleRepository struct {
 	db *pgxpool.Pool
@@ -21,18 +32,7 @@ func NewArticleRepository(db *pgxpool.Pool) *ArticleRepository {
 }
 
 func (r *ArticleRepository) fetchAll(ctx context.Context, limit, offset int) ([]Article, error) {
-	rows, err := r.db.Query(ctx, `
-		SELECT a.article_id,
-		       a.code,
-		       a.name,
-		       COALESCE(a.description, ''),
-		       c.name,
-		       (a.price * 100)::bigint,
-		       a.available_quantity
-		FROM catalogue.article a
-		JOIN catalogue.category c ON c.category_id = a.category_id
-		ORDER BY a.code
-		LIMIT $1 OFFSET $2`, limit, offset)
+	rows, err := r.db.Query(ctx, articleQuery+` ORDER BY a.code LIMIT $1 OFFSET $2`, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("query articles: %w", err)
 	}
@@ -40,8 +40,8 @@ func (r *ArticleRepository) fetchAll(ctx context.Context, limit, offset int) ([]
 
 	var articles []Article
 	for rows.Next() {
-		var a Article
-		if err := rows.Scan(&a.ID, &a.Code, &a.Name, &a.Description, &a.Category, &a.Price, &a.AvailableQuantity); err != nil {
+		a, err := scanArticle(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan article: %w", err)
 		}
 		articles = append(articles, a)
@@ -54,20 +54,7 @@ func (r *ArticleRepository) fetchAll(ctx context.Context, limit, offset int) ([]
 }
 
 func (r *ArticleRepository) fetchByID(ctx context.Context, id int) (Article, error) {
-	var a Article
-	err := r.db.QueryRow(ctx, `
-		SELECT a.article_id,
-		       a.code,
-		       a.name,
-		       COALESCE(a.description, ''),
-		       c.name,
-		       (a.price * 100)::bigint,
-		       a.available_quantity
-		FROM catalogue.article a
-		JOIN catalogue.category c ON c.category_id = a.category_id
-		WHERE a.article_id = $1`, id).
-		Scan(&a.ID, &a.Code, &a.Name, &a.Description, &a.Category, &a.Price, &a.AvailableQuantity)
-
+	a, err := scanArticle(r.db.QueryRow(ctx, articleQuery+` WHERE a.article_id = $1`, id))
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Article{}, errArticleNotFound
 	}
@@ -75,4 +62,10 @@ func (r *ArticleRepository) fetchByID(ctx context.Context, id int) (Article, err
 		return Article{}, fmt.Errorf("query article %d: %w", id, err)
 	}
 	return a, nil
+}
+
+func scanArticle(row pgx.Row) (Article, error) {
+	var a Article
+	err := row.Scan(&a.ID, &a.Code, &a.Name, &a.Description, &a.Category, &a.Price, &a.AvailableQuantity)
+	return a, err
 }
