@@ -24,3 +24,11 @@ func (s *ArticleService) fetchAll(ctx context.Context, limit, offset int) ([]Art
 	}
 	return articles, nil
 }
+
+func (s *ArticleService) fetchByID(ctx context.Context, id int) (Article, error) {
+	article, err := s.repo.fetchByID(ctx, id)
+	if err != nil {
+		return Article{}, fmt.Errorf("fetch article %d: %w", id, err)
+	}
+	return article, nil
+}

@@ -2,10 +2,14 @@ package catalogue
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+var errArticleNotFound = errors.New("article not found")
 
 // ArticleRepository reads articles from PostgreSQL.
 type ArticleRepository struct {
@@ -47,4 +51,28 @@ func (r *ArticleRepository) fetchAll(ctx context.Context, limit, offset int) ([]
 	}
 
 	return articles, nil
+}
+
+func (r *ArticleRepository) fetchByID(ctx context.Context, id int) (Article, error) {
+	var a Article
+	err := r.db.QueryRow(ctx, `
+		SELECT a.article_id,
+		       a.code,
+		       a.name,
+		       COALESCE(a.description, ''),
+		       c.name,
+		       (a.price * 100)::bigint,
+		       a.available_quantity
+		FROM catalogue.article a
+		JOIN catalogue.category c ON c.category_id = a.category_id
+		WHERE a.article_id = $1`, id).
+		Scan(&a.ID, &a.Code, &a.Name, &a.Description, &a.Category, &a.Price, &a.AvailableQuantity)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return Article{}, errArticleNotFound
+	}
+	if err != nil {
+		return Article{}, fmt.Errorf("query article %d: %w", id, err)
+	}
+	return a, nil
 }
