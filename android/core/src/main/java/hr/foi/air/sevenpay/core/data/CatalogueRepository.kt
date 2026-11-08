@@ -1,15 +1,15 @@
 package hr.foi.air.sevenpay.core.data
 
 import hr.foi.air.sevenpay.core.model.Article
-import hr.foi.air.sevenpay.core.network.CatalogApi
+import hr.foi.air.sevenpay.core.network.CatalogueApi
 
-interface CatalogRepository {
+interface CatalogueRepository {
     suspend fun getArticles(limit: Int, offset: Int): List<Article>
 }
 
-class NetworkCatalogRepository(
-    private val api: CatalogApi
-) : CatalogRepository {
+class NetworkCatalogueRepository(
+    private val api: CatalogueApi
+) : CatalogueRepository {
 
     override suspend fun getArticles(limit: Int, offset: Int): List<Article> =
         api.getArticles(limit, offset)

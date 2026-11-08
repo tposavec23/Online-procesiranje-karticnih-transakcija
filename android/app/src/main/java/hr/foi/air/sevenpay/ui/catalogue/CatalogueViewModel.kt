@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog
+package hr.foi.air.sevenpay.ui.catalogue
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,19 +7,19 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import hr.foi.air.sevenpay.SevenPayApplication
-import hr.foi.air.sevenpay.core.data.CatalogRepository
+import hr.foi.air.sevenpay.core.data.CatalogueRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class CatalogViewModel(
-    private val catalogRepository: CatalogRepository
+class CatalogueViewModel(
+    private val catalogueRepository: CatalogueRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<CatalogUiState>(CatalogUiState.Loading)
-    val state: StateFlow<CatalogUiState> = _state.asStateFlow()
+    private val _state = MutableStateFlow<CatalogueUiState>(CatalogueUiState.Loading)
+    val state: StateFlow<CatalogueUiState> = _state.asStateFlow()
 
     init {
         loadArticles()
@@ -27,13 +27,13 @@ class CatalogViewModel(
 
     fun loadArticles() {
         viewModelScope.launch {
-            _state.value = CatalogUiState.Loading
+            _state.value = CatalogueUiState.Loading
             _state.value = try {
-                val articles = catalogRepository.getArticles(PAGE_SIZE, 0)
+                val articles = catalogueRepository.getArticles(PAGE_SIZE, 0)
                 if (articles.isEmpty()) {
-                    CatalogUiState.Empty
+                    CatalogueUiState.Empty
                 } else {
-                    CatalogUiState.Success(
+                    CatalogueUiState.Success(
                         articles = articles,
                         hasMore = articles.size == PAGE_SIZE
                     )
@@ -41,21 +41,21 @@ class CatalogViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                CatalogUiState.Error("Dohvat artikala nije uspio. Provjerite vezu i pokušajte ponovno.")
+                CatalogueUiState.Error("Dohvat artikala nije uspio. Provjerite vezu i pokušajte ponovno.")
             }
         }
     }
 
     fun loadMore() {
-        val current = _state.value as? CatalogUiState.Success ?: return
+        val current = _state.value as? CatalogueUiState.Success ?: return
         if (!current.hasMore || current.isLoadingMore) return
 
         _state.value = current.copy(isLoadingMore = true, loadMoreFailed = false)
 
         viewModelScope.launch {
             try {
-                val next = catalogRepository.getArticles(PAGE_SIZE, current.articles.size)
-                _state.value = CatalogUiState.Success(
+                val next = catalogueRepository.getArticles(PAGE_SIZE, current.articles.size)
+                _state.value = CatalogueUiState.Success(
                     articles = current.articles + next,
                     hasMore = next.size == PAGE_SIZE
                 )
@@ -73,7 +73,7 @@ class CatalogViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[APPLICATION_KEY] as SevenPayApplication
-                CatalogViewModel(application.container.catalogRepository)
+                CatalogueViewModel(application.container.catalogueRepository)
             }
         }
     }

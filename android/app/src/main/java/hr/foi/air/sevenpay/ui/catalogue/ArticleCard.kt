@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog
+package hr.foi.air.sevenpay.ui.catalogue
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

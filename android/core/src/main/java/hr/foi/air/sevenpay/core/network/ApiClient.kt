@@ -16,6 +16,6 @@ class ApiClient {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-    val catalogApi: CatalogApi by lazy { retrofit(BuildConfig.CATALOG_BASE_URL).create(CatalogApi::class.java) }
+    val catalogueApi: CatalogueApi by lazy { retrofit(BuildConfig.CATALOGUE_BASE_URL).create(CatalogueApi::class.java) }
     val accountApi: AccountApi by lazy { retrofit(BuildConfig.ACCOUNT_BASE_URL).create(AccountApi::class.java) }
 }

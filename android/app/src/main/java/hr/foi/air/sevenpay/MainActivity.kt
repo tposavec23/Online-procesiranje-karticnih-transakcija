@@ -21,8 +21,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.core.model.Role
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
 import hr.foi.air.sevenpay.navigation.MerchantTab
-import hr.foi.air.sevenpay.ui.catalog.CatalogScreen
-import hr.foi.air.sevenpay.ui.catalog.CatalogViewModel
+import hr.foi.air.sevenpay.ui.catalogue.CatalogueScreen
+import hr.foi.air.sevenpay.ui.catalogue.CatalogueViewModel
 import hr.foi.air.sevenpay.ui.login.LoginScreen
 import hr.foi.air.sevenpay.ui.login.LoginViewModel
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
@@ -73,19 +73,19 @@ private fun MerchantHome() {
         ) {
             when (selectedTab) {
                 MerchantTab.ARTICLES -> {
-                    val catalogViewModel: CatalogViewModel = viewModel(factory = CatalogViewModel.Factory)
-                    val state by catalogViewModel.state.collectAsStateWithLifecycle()
+                    val catalogueViewModel: CatalogueViewModel = viewModel(factory = CatalogueViewModel.Factory)
+                    val state by catalogueViewModel.state.collectAsStateWithLifecycle()
 
-                    CatalogScreen(
+                    CatalogueScreen(
                         state = state,
                         onArticleClick = { article ->
                             // Article details will be added later.
                         },
                         onRetry = {
-                            catalogViewModel.loadArticles()
+                            catalogueViewModel.loadArticles()
                         },
                         onLoadMore = {
-                            catalogViewModel.loadMore()
+                            catalogueViewModel.loadMore()
                         }
                     )
                 }
