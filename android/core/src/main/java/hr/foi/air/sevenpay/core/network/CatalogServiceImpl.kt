@@ -10,4 +10,5 @@ class CatalogServiceImpl(
 
     override suspend fun getArticles(limit: Int, offset: Int): List<Article> =
         api.getArticles(limit, offset)
+    override suspend fun getArticle(id: Int): Article = api.getArticle(id)
 }
