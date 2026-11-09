@@ -1,8 +1,8 @@
-
 package hr.foi.air.sevenpay
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -20,7 +21,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.core.model.Role
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
+import hr.foi.air.sevenpay.ui.catalog.ArticleDetailScreen
 import hr.foi.air.sevenpay.ui.catalog.CatalogScreen
+import hr.foi.air.sevenpay.ui.catalog.CatalogUiState
 import hr.foi.air.sevenpay.ui.catalog.CatalogViewModel
 import hr.foi.air.sevenpay.ui.login.LoginScreen
 import hr.foi.air.sevenpay.ui.login.LoginViewModel
@@ -55,13 +58,19 @@ private fun MerchantHome() {
     var selectedItem by rememberSaveable {
         mutableIntStateOf(0)
     }
+    var selectedArticleId by rememberSaveable {
+        mutableStateOf<Int?>(null)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             BottomNavigationBar(
                 selectedItem = selectedItem,
-                onItemSelected = { selectedItem = it }
+                onItemSelected = {
+                    selectedItem = it
+                    selectedArticleId = null
+                }
             )
         }
     ) { innerPadding ->
@@ -74,19 +83,30 @@ private fun MerchantHome() {
                 0 -> {
                     val catalogViewModel: CatalogViewModel = viewModel()
                     val state by catalogViewModel.state.collectAsStateWithLifecycle()
+                    val selectedArticle = (state as? CatalogUiState.Success)
+                        ?.articles
+                        ?.firstOrNull { it.id == selectedArticleId }
 
-                    CatalogScreen(
-                        state = state,
-                        onArticleClick = { article ->
-                            // Article details will be added later.
-                        },
-                        onRetry = {
-                            catalogViewModel.loadArticles()
-                        },
-                        onLoadMore = {
-                            catalogViewModel.loadMore()
-                        }
-                    )
+                    if (selectedArticle != null) {
+                        BackHandler { selectedArticleId = null }
+                        ArticleDetailScreen(
+                            article = selectedArticle,
+                            onBack = { selectedArticleId = null }
+                        )
+                    } else {
+                        CatalogScreen(
+                            state = state,
+                            onArticleClick = { article ->
+                                selectedArticleId = article.id
+                            },
+                            onRetry = {
+                                catalogViewModel.loadArticles()
+                            },
+                            onLoadMore = {
+                                catalogViewModel.loadMore()
+                            }
+                        )
+                    }
                 }
                 1 -> Text("Košarica")
                 2 -> Text("Transakcije")

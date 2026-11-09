@@ -2,6 +2,7 @@ package hr.foi.air.sevenpay.ui.catalog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,12 +17,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BakeryDining
 import androidx.compose.material.icons.filled.Cake
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -52,6 +55,7 @@ private fun categoryIcon(category: String): ImageVector = when (category) {
 @Composable
 fun ArticleDetailScreen(
     article: Article,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -62,7 +66,22 @@ fun ArticleDetailScreen(
             .padding(horizontal = 16.dp)
     ) {
         Spacer(Modifier.height(16.dp))
-        Text("Detalji artikla", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier
+                    .size(44.dp)
+                    .background(Color.White, RoundedCornerShape(12.dp))
+                    .border(1.dp, Rub, RoundedCornerShape(12.dp))
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Natrag na popis artikala"
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Text("Detalji artikla", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        }
         Spacer(Modifier.height(16.dp))
 
         Box(
@@ -141,7 +160,7 @@ private fun CategoryTag(text: String) {
 @Composable
 private fun ArticleDetailScreenPreview() {
     SevenPayTheme {
-        ArticleDetailScreen(sampleArticles.first())
+        ArticleDetailScreen(sampleArticles.first(), onBack = {})
     }
 }
 
@@ -149,7 +168,7 @@ private fun ArticleDetailScreenPreview() {
 @Composable
 private fun ArticleDetailScreenUnavailablePreview() {
     SevenPayTheme {
-        ArticleDetailScreen(sampleArticles[2])
+        ArticleDetailScreen(sampleArticles[2], onBack = {})
     }
 }
 
@@ -157,6 +176,6 @@ private fun ArticleDetailScreenUnavailablePreview() {
 @Composable
 private fun ArticleDetailScreenLowStockPreview() {
     SevenPayTheme {
-        ArticleDetailScreen(sampleArticles[3])
+        ArticleDetailScreen(sampleArticles[3], onBack = {})
     }
 }
