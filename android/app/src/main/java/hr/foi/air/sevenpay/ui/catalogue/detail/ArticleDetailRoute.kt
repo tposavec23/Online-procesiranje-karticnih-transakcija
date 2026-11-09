@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog.detail
+package hr.foi.air.sevenpay.ui.catalogue.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,8 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import hr.foi.air.sevenpay.ui.theme.KremPozadina
-import hr.foi.air.sevenpay.ui.theme.Malina
+import hr.foi.air.sevenpay.ui.theme.CreamBackground
+import hr.foi.air.sevenpay.ui.theme.Raspberry
 
 @Composable
 fun ArticleDetailRoute(
@@ -19,19 +19,20 @@ fun ArticleDetailRoute(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: ArticleDetailViewModel = viewModel(key = "article-$articleId") {
-        ArticleDetailViewModel(articleId)
-    }
+    val viewModel: ArticleDetailViewModel = viewModel(
+        key = "article-$articleId",
+        factory = ArticleDetailViewModel.factory(articleId)
+    )
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (val current = state) {
         ArticleDetailUiState.Loading -> Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(KremPozadina),
+                .background(CreamBackground),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = Malina)
+            CircularProgressIndicator(color = Raspberry)
         }
 
         is ArticleDetailUiState.Success -> ArticleDetailScreen(

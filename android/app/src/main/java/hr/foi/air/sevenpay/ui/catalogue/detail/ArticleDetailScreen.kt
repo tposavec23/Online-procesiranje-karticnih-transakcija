@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog.detail
+package hr.foi.air.sevenpay.ui.catalogue.detail
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -36,18 +36,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.foi.air.sevenpay.core.model.Article
-import hr.foi.air.sevenpay.ui.catalog.StockChip
-import hr.foi.air.sevenpay.ui.catalog.formatPrice
-import hr.foi.air.sevenpay.ui.catalog.sampleArticles
-import hr.foi.air.sevenpay.ui.theme.HeroBreskva
-import hr.foi.air.sevenpay.ui.theme.KremPozadina
-import hr.foi.air.sevenpay.ui.theme.Malina
-import hr.foi.air.sevenpay.ui.theme.PrimarniTekst
-import hr.foi.air.sevenpay.ui.theme.Rub
+import hr.foi.air.sevenpay.ui.catalogue.StockChip
+import hr.foi.air.sevenpay.ui.catalogue.formatPrice
+import hr.foi.air.sevenpay.ui.catalogue.sampleArticles
+import hr.foi.air.sevenpay.ui.theme.HeroPeach
+import hr.foi.air.sevenpay.ui.theme.CreamBackground
+import hr.foi.air.sevenpay.ui.theme.Raspberry
+import hr.foi.air.sevenpay.ui.theme.PrimaryText
+import hr.foi.air.sevenpay.ui.theme.Border
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
-import hr.foi.air.sevenpay.ui.theme.SporedniTekst
-import hr.foi.air.sevenpay.ui.theme.SvijetlaRuza
-import hr.foi.air.sevenpay.ui.theme.TamnaMalina
+import hr.foi.air.sevenpay.ui.theme.SecondaryText
+import hr.foi.air.sevenpay.ui.theme.LightRose
+import hr.foi.air.sevenpay.ui.theme.DarkRaspberry
 
 private fun categoryIcon(category: String): ImageVector = when (category) {
     "Torte" -> Icons.Filled.Cake
@@ -64,7 +64,7 @@ fun ArticleDetailScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(KremPozadina)
+            .background(CreamBackground)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
     ) {
@@ -75,7 +75,7 @@ fun ArticleDetailScreen(
                 modifier = Modifier
                     .size(44.dp)
                     .background(Color.White, RoundedCornerShape(12.dp))
-                    .border(1.dp, Rub, RoundedCornerShape(12.dp))
+                    .border(1.dp, Border, RoundedCornerShape(12.dp))
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -91,13 +91,13 @@ fun ArticleDetailScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
-                .background(HeroBreskva, RoundedCornerShape(24.dp)),
+                .background(HeroPeach, RoundedCornerShape(24.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = categoryIcon(article.category),
                 contentDescription = article.category,
-                tint = Malina,
+                tint = Raspberry,
                 modifier = Modifier.size(72.dp)
             )
         }
@@ -108,7 +108,7 @@ fun ArticleDetailScreen(
                 text = article.code,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = SporedniTekst
+                color = SecondaryText
             )
             Spacer(Modifier.width(8.dp))
             CategoryTag(article.category)
@@ -131,12 +131,12 @@ fun ArticleDetailScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            border = BorderStroke(1.dp, Rub)
+            border = BorderStroke(1.dp, Border)
         ) {
             Column(Modifier.padding(16.dp)) {
                 Text("Opis", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(4.dp))
-                Text(article.description, fontSize = 14.sp, color = PrimarniTekst)
+                Text(article.description, fontSize = 14.sp, color = PrimaryText)
             }
         }
         Spacer(Modifier.height(16.dp))
@@ -147,14 +147,14 @@ fun ArticleDetailScreen(
 private fun CategoryTag(text: String) {
     Box(
         modifier = Modifier
-            .background(SvijetlaRuza, RoundedCornerShape(50))
+            .background(LightRose, RoundedCornerShape(50))
             .padding(horizontal = 10.dp, vertical = 4.dp)
     ) {
         Text(
             text = text,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = TamnaMalina
+            color = DarkRaspberry
         )
     }
 }

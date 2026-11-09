@@ -1,14 +1,18 @@
-package hr.foi.air.sevenpay.core.service
+package hr.foi.air.sevenpay.core.data
 
 import hr.foi.air.sevenpay.core.exception.ArticleNotFoundException
 import hr.foi.air.sevenpay.core.model.Article
-import hr.foi.air.sevenpay.core.network.ApiClient
-import hr.foi.air.sevenpay.core.network.CatalogApi
+import hr.foi.air.sevenpay.core.network.CatalogueApi
 import retrofit2.HttpException
 
-class CatalogServiceImpl(
-    private val api: CatalogApi = ApiClient.catalogApi
-) : CatalogService {
+interface CatalogueRepository {
+    suspend fun getArticles(limit: Int, offset: Int): List<Article>
+    suspend fun getArticle(id: Int): Article
+}
+
+class NetworkCatalogueRepository(
+    private val api: CatalogueApi
+) : CatalogueRepository {
 
     override suspend fun getArticles(limit: Int, offset: Int): List<Article> =
         api.getArticles(limit, offset)

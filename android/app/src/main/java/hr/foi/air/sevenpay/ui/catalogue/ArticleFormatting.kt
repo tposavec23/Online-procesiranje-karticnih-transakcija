@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog
+package hr.foi.air.sevenpay.ui.catalogue
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,21 +11,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import hr.foi.air.sevenpay.ui.theme.Dostupno
-import hr.foi.air.sevenpay.ui.theme.DostupnoPozadina
-import hr.foi.air.sevenpay.ui.theme.MaloNaZalihi
-import hr.foi.air.sevenpay.ui.theme.MaloNaZalihiPozadina
-import hr.foi.air.sevenpay.ui.theme.Nedostupno
-import hr.foi.air.sevenpay.ui.theme.NedostupnoPozadina
+import hr.foi.air.sevenpay.ui.theme.InStockText
+import hr.foi.air.sevenpay.ui.theme.InStockBackground
+import hr.foi.air.sevenpay.ui.theme.LowStockText
+import hr.foi.air.sevenpay.ui.theme.LowStockBackground
+import hr.foi.air.sevenpay.ui.theme.UnavailableText
+import hr.foi.air.sevenpay.ui.theme.UnavailableBackground
 import java.math.BigDecimal
 import java.util.Locale
 
 private const val LOW_STOCK_THRESHOLD = 2
 
 internal enum class StockStatus(val background: Color, val textColor: Color) {
-    IN_STOCK(DostupnoPozadina, Dostupno),
-    LOW(MaloNaZalihiPozadina, MaloNaZalihi),
-    UNAVAILABLE(NedostupnoPozadina, Nedostupno)
+    IN_STOCK(InStockBackground, InStockText),
+    LOW(LowStockBackground, LowStockText),
+    UNAVAILABLE(UnavailableBackground, UnavailableText)
 }
 
 internal fun stockStatus(quantity: Int) = when {

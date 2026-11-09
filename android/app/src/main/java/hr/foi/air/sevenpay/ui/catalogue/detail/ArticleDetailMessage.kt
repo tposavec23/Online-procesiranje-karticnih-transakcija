@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog.detail
+package hr.foi.air.sevenpay.ui.catalogue.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,10 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import hr.foi.air.sevenpay.ui.theme.KremPozadina
-import hr.foi.air.sevenpay.ui.theme.Malina
+import hr.foi.air.sevenpay.ui.theme.CreamBackground
+import hr.foi.air.sevenpay.ui.theme.Raspberry
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
-import hr.foi.air.sevenpay.ui.theme.SporedniTekst
+import hr.foi.air.sevenpay.ui.theme.SecondaryText
 
 @Composable
 fun ArticleDetailMessage(
@@ -34,14 +34,14 @@ fun ArticleDetailMessage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(KremPozadina)
+            .background(CreamBackground)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = message,
-            color = if (isError) MaterialTheme.colorScheme.error else SporedniTekst,
+            color = if (isError) MaterialTheme.colorScheme.error else SecondaryText,
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(12.dp))
@@ -49,7 +49,7 @@ fun ArticleDetailMessage(
         if (onRetry != null) {
             Button(
                 onClick = onRetry,
-                colors = ButtonDefaults.buttonColors(containerColor = Malina)
+                colors = ButtonDefaults.buttonColors(containerColor = Raspberry)
             ) {
                 Text("Pokušaj ponovno")
             }
@@ -60,7 +60,7 @@ fun ArticleDetailMessage(
         } else {
             Button(
                 onClick = onBack,
-                colors = ButtonDefaults.buttonColors(containerColor = Malina)
+                colors = ButtonDefaults.buttonColors(containerColor = Raspberry)
             ) {
                 Text("Natrag na popis")
             }

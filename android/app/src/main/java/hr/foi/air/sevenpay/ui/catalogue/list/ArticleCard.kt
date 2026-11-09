@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog.list
+package hr.foi.air.sevenpay.ui.catalogue.list
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -21,12 +21,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.foi.air.sevenpay.core.model.Article
-import hr.foi.air.sevenpay.ui.catalog.StockChip
-import hr.foi.air.sevenpay.ui.catalog.formatPrice
-import hr.foi.air.sevenpay.ui.catalog.sampleArticles
-import hr.foi.air.sevenpay.ui.theme.Rub
+import hr.foi.air.sevenpay.ui.catalogue.StockChip
+import hr.foi.air.sevenpay.ui.catalogue.formatPrice
+import hr.foi.air.sevenpay.ui.catalogue.sampleArticles
+import hr.foi.air.sevenpay.ui.theme.Border
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
-import hr.foi.air.sevenpay.ui.theme.SporedniTekst
+import hr.foi.air.sevenpay.ui.theme.SecondaryText
 
 @Composable
 fun ArticleCard(
@@ -39,14 +39,14 @@ fun ArticleCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, Rub)
+        border = BorderStroke(1.dp, Border)
     ) {
         Column(Modifier.padding(16.dp)) {
             Text(
                 text = article.code,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = SporedniTekst
+                color = SecondaryText
             )
             Spacer(Modifier.height(4.dp))
             Text(
@@ -57,7 +57,7 @@ fun ArticleCard(
             Text(
                 text = article.description,
                 fontSize = 14.sp,
-                color = SporedniTekst
+                color = SecondaryText
             )
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {

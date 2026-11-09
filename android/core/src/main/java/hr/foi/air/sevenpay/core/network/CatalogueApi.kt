@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface CatalogApi {
+interface CatalogueApi {
     @GET("api/articles")
     suspend fun getArticles(
         @Query("limit") limit: Int,

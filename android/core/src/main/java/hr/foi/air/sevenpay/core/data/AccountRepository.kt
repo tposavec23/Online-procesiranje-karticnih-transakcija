@@ -1,13 +1,18 @@
-package hr.foi.air.sevenpay.core.network
+package hr.foi.air.sevenpay.core.data
 
 import hr.foi.air.sevenpay.core.exception.InvalidCredentialsException
 import hr.foi.air.sevenpay.core.model.User
-import hr.foi.air.sevenpay.core.service.AccountService
+import hr.foi.air.sevenpay.core.network.AccountApi
+import hr.foi.air.sevenpay.core.network.LoginRequest
 import retrofit2.HttpException
 
-class AccountServiceImpl(
-    private val api: AccountApi = ApiClient.accountApi
-) : AccountService {
+interface AccountRepository {
+    suspend fun login(username: String, password: String): User
+}
+
+class NetworkAccountRepository(
+    private val api: AccountApi
+) : AccountRepository {
 
     override suspend fun login(username: String, password: String): User {
         try {

@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog.detail
+package hr.foi.air.sevenpay.ui.catalogue.detail
 
 import hr.foi.air.sevenpay.core.model.Article
 
