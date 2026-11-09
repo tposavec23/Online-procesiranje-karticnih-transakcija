@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +27,9 @@ import hr.foi.air.sevenpay.ui.theme.SporedniTekst
 fun ArticleDetailMessage(
     message: String,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRetry: (() -> Unit)? = null,
+    isError: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -37,15 +41,29 @@ fun ArticleDetailMessage(
     ) {
         Text(
             text = message,
-            color = SporedniTekst,
+            color = if (isError) MaterialTheme.colorScheme.error else SporedniTekst,
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(12.dp))
-        Button(
-            onClick = onBack,
-            colors = ButtonDefaults.buttonColors(containerColor = Malina)
-        ) {
-            Text("Natrag na popis")
+
+        if (onRetry != null) {
+            Button(
+                onClick = onRetry,
+                colors = ButtonDefaults.buttonColors(containerColor = Malina)
+            ) {
+                Text("Pokušaj ponovno")
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = onBack) {
+                Text("Natrag na popis")
+            }
+        } else {
+            Button(
+                onClick = onBack,
+                colors = ButtonDefaults.buttonColors(containerColor = Malina)
+            ) {
+                Text("Natrag na popis")
+            }
         }
     }
 }
@@ -55,5 +73,18 @@ fun ArticleDetailMessage(
 private fun ArticleDetailMessagePreview() {
     SevenPayTheme {
         ArticleDetailMessage(message = "Artikl više ne postoji.", onBack = {})
+    }
+}
+
+@Preview(showBackground = true, heightDp = 800)
+@Composable
+private fun ArticleDetailErrorPreview() {
+    SevenPayTheme {
+        ArticleDetailMessage(
+            message = "Dohvat detalja artikla nije uspio. Provjerite vezu i pokušajte ponovno.",
+            onBack = {},
+            onRetry = {},
+            isError = true
+        )
     }
 }
