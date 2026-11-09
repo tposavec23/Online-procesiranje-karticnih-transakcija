@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog
+package hr.foi.air.sevenpay.ui.catalog.detail
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -36,6 +36,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.foi.air.sevenpay.core.model.Article
+import hr.foi.air.sevenpay.ui.catalog.StockChip
+import hr.foi.air.sevenpay.ui.catalog.formatPrice
+import hr.foi.air.sevenpay.ui.catalog.sampleArticles
 import hr.foi.air.sevenpay.ui.theme.HeroBreskva
 import hr.foi.air.sevenpay.ui.theme.KremPozadina
 import hr.foi.air.sevenpay.ui.theme.Malina

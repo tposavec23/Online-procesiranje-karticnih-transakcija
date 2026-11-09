@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog
+package hr.foi.air.sevenpay.ui.catalog.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

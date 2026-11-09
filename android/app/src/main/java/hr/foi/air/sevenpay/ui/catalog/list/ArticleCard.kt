@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog
+package hr.foi.air.sevenpay.ui.catalog.list
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.foi.air.sevenpay.core.model.Article
+import hr.foi.air.sevenpay.ui.catalog.StockChip
+import hr.foi.air.sevenpay.ui.catalog.formatPrice
+import hr.foi.air.sevenpay.ui.catalog.sampleArticles
 import hr.foi.air.sevenpay.ui.theme.Rub
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
 import hr.foi.air.sevenpay.ui.theme.SporedniTekst

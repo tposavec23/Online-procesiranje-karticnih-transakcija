@@ -21,9 +21,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.core.model.Role
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
-import hr.foi.air.sevenpay.ui.catalog.ArticleDetailRoute
-import hr.foi.air.sevenpay.ui.catalog.CatalogScreen
-import hr.foi.air.sevenpay.ui.catalog.CatalogViewModel
+import hr.foi.air.sevenpay.ui.catalog.detail.ArticleDetailRoute
+import hr.foi.air.sevenpay.ui.catalog.list.CatalogScreen
+import hr.foi.air.sevenpay.ui.catalog.list.CatalogViewModel
 import hr.foi.air.sevenpay.ui.login.LoginScreen
 import hr.foi.air.sevenpay.ui.login.LoginViewModel
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme

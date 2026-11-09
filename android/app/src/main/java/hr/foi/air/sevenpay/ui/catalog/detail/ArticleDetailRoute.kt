@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog
+package hr.foi.air.sevenpay.ui.catalog.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
