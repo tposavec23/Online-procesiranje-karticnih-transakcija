@@ -42,8 +42,6 @@ import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
 import hr.foi.air.sevenpay.ui.theme.SporedniTekst
 import hr.foi.air.sevenpay.ui.theme.SvijetlaRuza
 import hr.foi.air.sevenpay.ui.theme.TamnaMalina
-import java.math.BigDecimal
-import java.util.Locale
 
 private fun categoryIcon(category: String): ImageVector = when (category) {
     "Torte" -> Icons.Filled.Cake
@@ -96,11 +94,15 @@ fun ArticleDetailScreen(
         Spacer(Modifier.height(4.dp))
         Text(article.name, fontSize = 28.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
-        Text(
-            text = String.format(Locale.GERMANY, "%.2f €", BigDecimal.valueOf(article.price, 2)),
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = formatPrice(article.price),
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.width(12.dp))
+            StockChip(article.availableQuantity)
+        }
         Spacer(Modifier.height(16.dp))
 
         Card(
@@ -145,8 +147,16 @@ private fun ArticleDetailScreenPreview() {
 
 @Preview(showBackground = true, heightDp = 800)
 @Composable
-private fun ArticleDetailScreenSnackPreview() {
+private fun ArticleDetailScreenUnavailablePreview() {
     SevenPayTheme {
         ArticleDetailScreen(sampleArticles[2])
+    }
+}
+
+@Preview(showBackground = true, heightDp = 800)
+@Composable
+private fun ArticleDetailScreenLowStockPreview() {
+    SevenPayTheme {
+        ArticleDetailScreen(sampleArticles[3])
     }
 }
