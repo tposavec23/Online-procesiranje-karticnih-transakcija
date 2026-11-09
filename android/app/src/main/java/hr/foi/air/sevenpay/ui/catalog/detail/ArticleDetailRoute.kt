@@ -39,5 +39,11 @@ fun ArticleDetailRoute(
             onBack = onBack,
             modifier = modifier
         )
+
+        ArticleDetailUiState.NotFound -> ArticleDetailMessage(
+            message = "Artikl više ne postoji.",
+            onBack = onBack,
+            modifier = modifier
+        )
     }
 }
