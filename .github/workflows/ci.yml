@@ -8,8 +8,8 @@ on:
 permissions:
   contents: read
 
-# Novi commit u istom PR-u otkazuje stari run tog PR-a; različiti PR-ovi rade neovisno jedan o drugome;
-# svaki push u develop i main radi do kraja
+# A new commit in the same PR cancels the PR's previous run; different PRs run independently of each other;
+# every push to develop and main runs to completion
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
@@ -35,15 +35,15 @@ jobs:
           go-version-file: services/${{ matrix.service }}/go.mod
           cache-dependency-path: services/${{ matrix.service }}/go.mod
       - run: go build ./...
-      # go vet je službeni Go alat za statičku analizu koda
+      # go vet is the official Go tool for static code analysis
       - run: go vet ./...
       - run: go test ./...
-      # gofmt je službeni i preporučeni Go alat za formatiranje koda; korak pada ako neki fajl nije formatiran
+      # gofmt is the official and recommended Go tool for code formatting; the step fails if any file is not formatted
       - name: gofmt
         run: |
           unformatted=$(gofmt -l .)
           if [ -n "$unformatted" ]; then
-            echo "Ovi fajlovi nisu formatirani, u mapi servisa pokreni: gofmt -w ."
+            echo "These files are not formatted; run gofmt -w . in the service folder"
             echo "$unformatted"
             exit 1
           fi

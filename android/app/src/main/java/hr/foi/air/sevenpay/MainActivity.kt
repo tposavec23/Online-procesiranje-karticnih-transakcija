@@ -11,7 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -20,8 +20,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.core.model.Role
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
-import hr.foi.air.sevenpay.ui.catalog.CatalogScreen
-import hr.foi.air.sevenpay.ui.catalog.CatalogViewModel
+import hr.foi.air.sevenpay.navigation.MerchantTab
+import hr.foi.air.sevenpay.ui.catalogue.CatalogueScreen
+import hr.foi.air.sevenpay.ui.catalogue.CatalogueViewModel
 import hr.foi.air.sevenpay.ui.login.LoginScreen
 import hr.foi.air.sevenpay.ui.login.LoginViewModel
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
@@ -32,7 +33,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SevenPayTheme {
-                val loginViewModel: LoginViewModel = viewModel()
+                val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
                 val loginState by loginViewModel.state.collectAsStateWithLifecycle()
 
                 when (loginState.loggedInUser?.role) {
@@ -52,16 +53,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun MerchantHome() {
-    var selectedItem by rememberSaveable {
-        mutableIntStateOf(0)
+    var selectedTab by rememberSaveable {
+        mutableStateOf(MerchantTab.ARTICLES)
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             BottomNavigationBar(
-                selectedItem = selectedItem,
-                onItemSelected = { selectedItem = it }
+                selectedTab = selectedTab,
+                onTabSelected = { selectedTab = it }
             )
         }
     ) { innerPadding ->
@@ -70,28 +71,25 @@ private fun MerchantHome() {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            when (selectedItem) {
-                0 -> {
-                    val catalogViewModel: CatalogViewModel = viewModel()
-                    val state by catalogViewModel.state.collectAsStateWithLifecycle()
+            when (selectedTab) {
+                MerchantTab.ARTICLES -> {
+                    val catalogueViewModel: CatalogueViewModel = viewModel(factory = CatalogueViewModel.Factory)
+                    val state by catalogueViewModel.state.collectAsStateWithLifecycle()
 
-                    CatalogScreen(
+                    CatalogueScreen(
                         state = state,
                         onArticleClick = { article ->
                             // Article details will be added later.
                         },
                         onRetry = {
-                            catalogViewModel.loadArticles()
+                            catalogueViewModel.loadArticles()
                         },
                         onLoadMore = {
-                            catalogViewModel.loadMore()
+                            catalogueViewModel.loadMore()
                         }
                     )
                 }
-                1 -> Text("Košarica")
-                2 -> Text("Transakcije")
-                3 -> Text("Račun")
-                else -> Text("Artikli")
+                MerchantTab.CART, MerchantTab.TRANSACTIONS, MerchantTab.ACCOUNT -> Text(selectedTab.title)
             }
         }
     }

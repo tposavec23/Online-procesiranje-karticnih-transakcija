@@ -1,4 +1,4 @@
-package hr.foi.air.sevenpay.ui.catalog
+package hr.foi.air.sevenpay.ui.catalogue
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,14 +26,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.foi.air.sevenpay.core.model.Article
-import hr.foi.air.sevenpay.ui.theme.KremPozadina
-import hr.foi.air.sevenpay.ui.theme.Malina
+import hr.foi.air.sevenpay.ui.theme.CreamBackground
+import hr.foi.air.sevenpay.ui.theme.Raspberry
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
-import hr.foi.air.sevenpay.ui.theme.SporedniTekst
+import hr.foi.air.sevenpay.ui.theme.SecondaryText
 
 @Composable
-fun CatalogScreen(
-    state: CatalogUiState,
+fun CatalogueScreen(
+    state: CatalogueUiState,
     onArticleClick: (Article) -> Unit,
     onRetry: () -> Unit,
     onLoadMore: () -> Unit,
@@ -42,7 +42,7 @@ fun CatalogScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(KremPozadina)
+            .background(CreamBackground)
             .padding(horizontal = 16.dp)
     ) {
         Spacer(Modifier.height(16.dp))
@@ -50,19 +50,19 @@ fun CatalogScreen(
         Spacer(Modifier.height(16.dp))
 
         when (state) {
-            CatalogUiState.Loading -> CenteredContent {
-                CircularProgressIndicator(color = Malina)
+            CatalogueUiState.Loading -> CenteredContent {
+                CircularProgressIndicator(color = Raspberry)
             }
 
-            CatalogUiState.Empty -> CenteredContent {
+            CatalogueUiState.Empty -> CenteredContent {
                 Text(
                     "Trenutno nema dostupnih artikala.",
-                    color = SporedniTekst,
+                    color = SecondaryText,
                     textAlign = TextAlign.Center
                 )
             }
 
-            is CatalogUiState.Error -> CenteredContent {
+            is CatalogueUiState.Error -> CenteredContent {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         state.message,
@@ -72,18 +72,18 @@ fun CatalogScreen(
                     Spacer(Modifier.height(12.dp))
                     Button(
                         onClick = onRetry,
-                        colors = ButtonDefaults.buttonColors(containerColor = Malina)
+                        colors = ButtonDefaults.buttonColors(containerColor = Raspberry)
                     ) {
                         Text("Pokušaj ponovno")
                     }
                 }
             }
 
-            is CatalogUiState.Success -> {
+            is CatalogueUiState.Success -> {
                 Text(
                     "Prikazano artikala: ${state.articles.size}",
                     fontSize = 14.sp,
-                    color = SporedniTekst
+                    color = SecondaryText
                 )
                 Spacer(Modifier.height(8.dp))
                 LazyColumn(
@@ -130,11 +130,11 @@ private fun LoadMoreFooter(
             Spacer(Modifier.height(8.dp))
         }
         if (isLoading) {
-            CircularProgressIndicator(color = Malina)
+            CircularProgressIndicator(color = Raspberry)
         } else {
             Button(
                 onClick = onClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Malina)
+                colors = ButtonDefaults.buttonColors(containerColor = Raspberry)
             ) {
                 Text("Prikaži više")
             }
@@ -154,24 +154,24 @@ private fun CenteredContent(content: @Composable () -> Unit) {
 
 @Preview(showBackground = true, heightDp = 800)
 @Composable
-private fun CatalogScreenPreview() {
+private fun CatalogueScreenPreview() {
     SevenPayTheme {
-        CatalogScreen(CatalogUiState.Success(sampleArticles, hasMore = true), {}, {}, {})
+        CatalogueScreen(CatalogueUiState.Success(sampleArticles, hasMore = true), {}, {}, {})
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun CatalogScreenEmptyPreview() {
+private fun CatalogueScreenEmptyPreview() {
     SevenPayTheme {
-        CatalogScreen(CatalogUiState.Empty, {}, {}, {})
+        CatalogueScreen(CatalogueUiState.Empty, {}, {}, {})
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun CatalogScreenErrorPreview() {
+private fun CatalogueScreenErrorPreview() {
     SevenPayTheme {
-        CatalogScreen(CatalogUiState.Error("Dohvat artikala nije uspio."), {}, {}, {})
+        CatalogueScreen(CatalogueUiState.Error("Dohvat artikala nije uspio."), {}, {}, {})
     }
 }
