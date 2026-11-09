@@ -2,6 +2,7 @@ package hr.foi.air.sevenpay.ui.catalog.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import hr.foi.air.sevenpay.core.exception.ArticleNotFoundException
 import hr.foi.air.sevenpay.core.service.CatalogService
 import hr.foi.air.sevenpay.core.service.CatalogServiceImpl
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,11 @@ class ArticleDetailViewModel(
     fun load() {
         viewModelScope.launch {
             _state.value = ArticleDetailUiState.Loading
-            _state.value = ArticleDetailUiState.Success(catalogService.getArticle(articleId))
+            _state.value = try {
+                ArticleDetailUiState.Success(catalogService.getArticle(articleId))
+            } catch (e: ArticleNotFoundException) {
+                ArticleDetailUiState.NotFound
+            }
         }
     }
 }
