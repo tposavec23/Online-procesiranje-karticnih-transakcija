@@ -45,5 +45,13 @@ fun ArticleDetailRoute(
             onBack = onBack,
             modifier = modifier
         )
+
+        is ArticleDetailUiState.Error -> ArticleDetailMessage(
+            message = current.message,
+            onBack = onBack,
+            modifier = modifier,
+            onRetry = viewModel::load,
+            isError = true
+        )
     }
 }
