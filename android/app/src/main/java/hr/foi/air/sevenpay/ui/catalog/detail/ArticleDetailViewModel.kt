@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import hr.foi.air.sevenpay.core.exception.ArticleNotFoundException
 import hr.foi.air.sevenpay.core.service.CatalogService
 import hr.foi.air.sevenpay.core.service.CatalogServiceImpl
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +30,12 @@ class ArticleDetailViewModel(
                 ArticleDetailUiState.Success(catalogService.getArticle(articleId))
             } catch (e: ArticleNotFoundException) {
                 ArticleDetailUiState.NotFound
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                ArticleDetailUiState.Error(
+                    "Dohvat detalja artikla nije uspio. Provjerite vezu i pokušajte ponovno."
+                )
             }
         }
     }
