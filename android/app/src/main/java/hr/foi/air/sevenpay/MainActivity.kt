@@ -21,9 +21,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.core.model.Role
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
-import hr.foi.air.sevenpay.ui.catalog.ArticleDetailScreen
+import hr.foi.air.sevenpay.ui.catalog.ArticleDetailRoute
 import hr.foi.air.sevenpay.ui.catalog.CatalogScreen
-import hr.foi.air.sevenpay.ui.catalog.CatalogUiState
 import hr.foi.air.sevenpay.ui.catalog.CatalogViewModel
 import hr.foi.air.sevenpay.ui.login.LoginScreen
 import hr.foi.air.sevenpay.ui.login.LoginViewModel
@@ -81,19 +80,18 @@ private fun MerchantHome() {
         ) {
             when (selectedItem) {
                 0 -> {
-                    val catalogViewModel: CatalogViewModel = viewModel()
-                    val state by catalogViewModel.state.collectAsStateWithLifecycle()
-                    val selectedArticle = (state as? CatalogUiState.Success)
-                        ?.articles
-                        ?.firstOrNull { it.id == selectedArticleId }
+                    val articleId = selectedArticleId
 
-                    if (selectedArticle != null) {
+                    if (articleId != null) {
                         BackHandler { selectedArticleId = null }
-                        ArticleDetailScreen(
-                            article = selectedArticle,
+                        ArticleDetailRoute(
+                            articleId = articleId,
                             onBack = { selectedArticleId = null }
                         )
                     } else {
+                        val catalogViewModel: CatalogViewModel = viewModel()
+                        val state by catalogViewModel.state.collectAsStateWithLifecycle()
+
                         CatalogScreen(
                             state = state,
                             onArticleClick = { article ->
