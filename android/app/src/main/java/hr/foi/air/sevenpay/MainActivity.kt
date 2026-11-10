@@ -1,8 +1,8 @@
-
 package hr.foi.air.sevenpay
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +21,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.core.model.Role
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
 import hr.foi.air.sevenpay.navigation.MerchantTab
-import hr.foi.air.sevenpay.ui.catalogue.CatalogueScreen
-import hr.foi.air.sevenpay.ui.catalogue.CatalogueViewModel
+import hr.foi.air.sevenpay.ui.catalogue.detail.ArticleDetailRoute
+import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueScreen
+import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueViewModel
 import hr.foi.air.sevenpay.ui.login.LoginScreen
 import hr.foi.air.sevenpay.ui.login.LoginViewModel
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
@@ -56,13 +57,19 @@ private fun MerchantHome() {
     var selectedTab by rememberSaveable {
         mutableStateOf(MerchantTab.ARTICLES)
     }
+    var selectedArticleId by rememberSaveable {
+        mutableStateOf<Int?>(null)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             BottomNavigationBar(
                 selectedTab = selectedTab,
-                onTabSelected = { selectedTab = it }
+                onTabSelected = {
+                    selectedTab = it
+                    selectedArticleId = null
+                }
             )
         }
     ) { innerPadding ->
@@ -73,21 +80,31 @@ private fun MerchantHome() {
         ) {
             when (selectedTab) {
                 MerchantTab.ARTICLES -> {
-                    val catalogueViewModel: CatalogueViewModel = viewModel(factory = CatalogueViewModel.Factory)
-                    val state by catalogueViewModel.state.collectAsStateWithLifecycle()
+                    val articleId = selectedArticleId
 
-                    CatalogueScreen(
-                        state = state,
-                        onArticleClick = { article ->
-                            // Article details will be added later.
-                        },
-                        onRetry = {
-                            catalogueViewModel.loadArticles()
-                        },
-                        onLoadMore = {
-                            catalogueViewModel.loadMore()
-                        }
-                    )
+                    if (articleId != null) {
+                        BackHandler { selectedArticleId = null }
+                        ArticleDetailRoute(
+                            articleId = articleId,
+                            onBack = { selectedArticleId = null }
+                        )
+                    } else {
+                        val catalogueViewModel: CatalogueViewModel = viewModel(factory = CatalogueViewModel.Factory)
+                        val state by catalogueViewModel.state.collectAsStateWithLifecycle()
+
+                        CatalogueScreen(
+                            state = state,
+                            onArticleClick = { article ->
+                                selectedArticleId = article.id
+                            },
+                            onRetry = {
+                                catalogueViewModel.loadArticles()
+                            },
+                            onLoadMore = {
+                                catalogueViewModel.loadMore()
+                            }
+                        )
+                    }
                 }
                 MerchantTab.CART, MerchantTab.TRANSACTIONS, MerchantTab.ACCOUNT -> Text(selectedTab.title)
             }
