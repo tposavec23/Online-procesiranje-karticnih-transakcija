@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+# A new commit in the same PR cancels the PR's previous run; different PRs run independently of each other;
+# every push to develop and main runs to completion
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  go-service:
+    name: go (${{ matrix.service }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [account, catalogue, transaction, bank-communication, bank-simulator]
+    defaults:
+      run:
+        working-directory: services/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: services/${{ matrix.service }}/go.mod
+          cache-dependency-path: services/${{ matrix.service }}/go.mod
+      - run: go build ./...
+      # go vet is the official Go tool for static code analysis
+      - run: go vet ./...
+      - run: go test ./...
+      # gofmt is the official and recommended Go tool for code formatting; the step fails if any file is not formatted
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "These files are not formatted; run gofmt -w . in the service folder"
+            echo "$unformatted"
+            exit 1
+          fi
+
+  go:
+    needs: go-service
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: test "${{ needs.go-service.result }}" = success
+
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew assembleDebug lintDebug
