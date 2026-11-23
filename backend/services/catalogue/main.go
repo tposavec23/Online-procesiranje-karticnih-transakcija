@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"sevenpay/services/catalogue/internal/catalogue"
-	"sevenpay/services/catalogue/internal/config"
+	"sevenpay/backend/services/catalogue/internal/catalogue"
+	"sevenpay/backend/services/catalogue/internal/config"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

@@ -8,12 +8,16 @@ Sustav se sastoji od Android aplikacije i backend servisa u Go-u.
 
 ```
 android/                   Android aplikacija (Kotlin)
-services/
-  account/                 Account management service
-  catalogue/               Catalogue management service
-  transaction/             Transaction management service
-  bank-communication/      Bank communication service
-  bank-simulator/          Bank simulator service
+backend/                   Backend (Go)
+  services/
+    account/               Account management service
+    catalogue/             Catalogue management service
+    transaction/           Transaction management service
+    bank-communication/    Bank communication service
+    bank-simulator/        Bank simulator service
+  docker/                  Init skripte baze
+  compose.yaml             Postgres u Dockeru (pokreće se iz mape backend/)
+  .env.example             Predložak za backend/.env
 ```
 
 ## Servisi
