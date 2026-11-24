@@ -64,6 +64,8 @@ func (h *CartHandler) addItem(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid quantity", http.StatusBadRequest)
 	case errors.Is(err, errArticleNotFound):
 		http.Error(w, "article not found", http.StatusNotFound)
+	case errors.Is(err, errArticleUnavailable):
+		http.Error(w, "article is not available", http.StatusConflict)
 	case errors.Is(err, errUnknownUser):
 		http.Error(w, "unknown user", http.StatusUnauthorized)
 	case err != nil:
