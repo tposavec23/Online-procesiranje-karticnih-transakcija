@@ -7,13 +7,23 @@ Sustav se sastoji od Android aplikacije i backend servisa u Go-u.
 ## Struktura repozitorija
 
 ```
-android/                   Android aplikacija (Kotlin)
-services/
-  account/                 Account management service
-  catalogue/               Catalogue management service
-  transaction/             Transaction management service
-  bank-communication/      Bank communication service
-  bank-simulator/          Bank simulator service
+android/                       Android aplikacija (Kotlin)
+  app/                         UI sloj
+  core/                        Data sloj
+backend/                       Backend (Go)
+  services/
+    account/                   Account management service
+    catalogue/                 Catalogue management service
+    transaction/               Transaction management service
+    bank-communication/        Bank communication service
+    bank-simulator/            Bank simulator service
+  docker/                      Init skripte baze
+  compose.yaml                 Postgres u Dockeru
+  .env.example                 Predložak za backend/.env
+.github/
+  workflows/ci.yml             CI za Go servise i Android
+  pull_request_template.md     Predložak PR-a
+README.md
 ```
 
 ## Servisi

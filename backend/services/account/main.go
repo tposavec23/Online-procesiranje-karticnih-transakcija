@@ -7,8 +7,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"sevenpay/services/account/internal/account"
-	"sevenpay/services/account/internal/config"
+	"sevenpay/backend/services/account/internal/account"
+	"sevenpay/backend/services/account/internal/config"
 )
 
 func main() {

@@ -25,15 +25,15 @@ jobs:
         service: [account, catalogue, transaction, bank-communication, bank-simulator]
     defaults:
       run:
-        working-directory: services/${{ matrix.service }}
+        working-directory: backend/services/${{ matrix.service }}
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - uses: actions/setup-go@v7
         with:
-          go-version-file: services/${{ matrix.service }}/go.mod
-          cache-dependency-path: services/${{ matrix.service }}/go.mod
+          go-version-file: backend/services/${{ matrix.service }}/go.mod
+          cache-dependency-path: backend/services/${{ matrix.service }}/go.mod
       - run: go build ./...
       # go vet is the official Go tool for static code analysis
       - run: go vet ./...

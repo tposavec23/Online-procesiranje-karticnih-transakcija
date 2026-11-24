@@ -1,4 +1,4 @@
-module sevenpay/services/account
+module sevenpay/backend/services/account
 
 go 1.27.3
 

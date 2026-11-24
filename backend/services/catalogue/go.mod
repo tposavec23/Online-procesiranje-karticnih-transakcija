@@ -1,4 +1,4 @@
-module sevenpay/services/catalogue
+module sevenpay/backend/services/catalogue
 
 go 1.27.3
 
