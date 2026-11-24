@@ -11,12 +11,15 @@ interface AccountRepository {
 }
 
 class NetworkAccountRepository(
-    private val api: AccountApi
+    private val api: AccountApi,
+    private val sessionManager: SessionManager
 ) : AccountRepository {
 
     override suspend fun login(username: String, password: String): User {
         try {
-            return api.login(LoginRequest(username.trim(), password))
+            val response = api.login(LoginRequest(username.trim(), password))
+            sessionManager.saveToken(response.token)
+            return response.user
         } catch (e: HttpException) {
             if (e.code() == 401) throw InvalidCredentialsException()
             throw e
