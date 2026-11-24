@@ -63,10 +63,13 @@ func (r *CartRepository) addItem(ctx context.Context, userID, articleID, quantit
 	}
 
 	_, err = tx.Exec(ctx, `
-		INSERT INTO catalogue.cart_item (cart_id, article_id, quantity, unit_price)
-		SELECT $1::int, article_id, $3::int, price
-		FROM catalogue.article
-		WHERE article_id = $2`, cartID, articleID, quantity)
+    INSERT INTO catalogue.cart_item (cart_id, article_id, quantity, unit_price)
+    SELECT $1::int, article_id, $3::int, price
+    FROM catalogue.article
+    WHERE article_id = $2
+    ON CONFLICT (cart_id, article_id)
+    DO UPDATE SET quantity = catalogue.cart_item.quantity + EXCLUDED.quantity`,
+		cartID, articleID, quantity)
 	if err != nil {
 		return fmt.Errorf("save cart item: %w", err)
 	}
