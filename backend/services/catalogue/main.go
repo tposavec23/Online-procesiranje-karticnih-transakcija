@@ -30,13 +30,16 @@ func main() {
 		log.Fatalf("database ping: %v", err)
 	}
 
-	// Wire the article repository, service and handler together.
 	repo := catalogue.NewArticleRepository(db)
 	svc := catalogue.NewArticleService(repo)
 	handler := catalogue.NewHandler(svc)
+	cartRepo := catalogue.NewCartRepository(db)
+	cartSvc := catalogue.NewCartService(cartRepo)
+	cartHandler := catalogue.NewCartHandler(cartSvc)
 
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)
+	cartHandler.RegisterRoutes(mux)
 
 	log.Printf("catalogue service listening on port %s", cfg.Port)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, mux))
