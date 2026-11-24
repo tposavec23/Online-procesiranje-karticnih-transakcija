@@ -414,6 +414,8 @@ func maskPAN(pan string) string {
 	return pan[:6] + strings.Repeat("*", len(pan)-10) + pan[len(pan)-4:]
 }
 
+// TODO: %#v and json.Marshal still print the card number and the expiry date in clear text.
+// Consider types for PAN and Expiry with masked String, GoString, MarshalJSON and LogValue.
 func (s Sale) attrs() []slog.Attr {
 	return []slog.Attr{
 		slog.String("pan", maskPAN(s.PAN)),
