@@ -16,34 +16,42 @@ concurrency:
 
 jobs:
   go-service:
-    name: go (${{ matrix.service }})
+    name: go (${{ matrix.module }})
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
-        service: [account, catalogue, transaction, bank-communication, bank-simulator]
+        # Every Go module under backend/: the services and the shared libraries
+        module:
+          - services/account
+          - services/catalogue
+          - services/transaction
+          - services/bank-communication
+          - services/bank-simulator
+          - libs/h2h
     defaults:
       run:
-        working-directory: backend/services/${{ matrix.service }}
+        working-directory: backend/${{ matrix.module }}
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - uses: actions/setup-go@v7
         with:
-          go-version-file: backend/services/${{ matrix.service }}/go.mod
-          cache-dependency-path: backend/services/${{ matrix.service }}/go.mod
+          go-version-file: backend/${{ matrix.module }}/go.mod
+          cache-dependency-path: backend/${{ matrix.module }}/go.mod
       - run: go build ./...
       # go vet is the official Go tool for static code analysis
       - run: go vet ./...
-      - run: go test ./...
+      # -race finds data races between goroutines, which tests without it miss
+      - run: go test -race ./...
       # gofmt is the official and recommended Go tool for code formatting; the step fails if any file is not formatted
       - name: gofmt
         run: |
           unformatted=$(gofmt -l .)
           if [ -n "$unformatted" ]; then
-            echo "These files are not formatted; run gofmt -w . in the service folder"
+            echo "These files are not formatted; run gofmt -w . in the module folder"
             echo "$unformatted"
             exit 1
           fi
