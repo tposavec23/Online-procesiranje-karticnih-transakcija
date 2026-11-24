@@ -12,12 +12,18 @@ type loginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+type loginResponse struct {
+	Token string `json:"token"`
+	User  User   `json:"user"`
+}
 type Handler struct {
-	auth *AuthService
+	auth   *AuthService
+	tokens *TokenService
 }
 
-func NewHandler(auth *AuthService) *Handler {
-	return &Handler{auth: auth}
+func NewHandler(auth *AuthService, tokens *TokenService) *Handler {
+	return &Handler{auth: auth, tokens: tokens}
 }
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
@@ -48,7 +54,14 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, user)
+	token, err := h.tokens.issue(user)
+	if err != nil {
+		log.Printf("issue token: %v", err)
+		writeError(w, http.StatusInternalServerError, "login failed")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, loginResponse{Token: token, User: user})
 }
 
 func writeJSON(w http.ResponseWriter, status int, data any) {
