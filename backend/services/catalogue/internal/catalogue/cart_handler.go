@@ -39,7 +39,6 @@ func (h *CartHandler) getCart(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to fetch cart", http.StatusInternalServerError)
 		return
 	}
-
 	writeJSON(w, cart)
 }
 
@@ -66,6 +65,8 @@ func (h *CartHandler) addItem(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "article not found", http.StatusNotFound)
 	case errors.Is(err, errArticleUnavailable):
 		http.Error(w, "article is not available", http.StatusConflict)
+	case errors.Is(err, errStockExceeded):
+		http.Error(w, "requested quantity exceeds available stock", http.StatusConflict)
 	case errors.Is(err, errUnknownUser):
 		http.Error(w, "unknown user", http.StatusUnauthorized)
 	case err != nil:
@@ -76,6 +77,7 @@ func (h *CartHandler) addItem(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// The login service returns no token, so for now the user id comes from a header.
 func userIDFromRequest(w http.ResponseWriter, r *http.Request) (int, bool) {
 	id, err := strconv.Atoi(r.Header.Get("X-User-Id"))
 	if err != nil || id < 1 {

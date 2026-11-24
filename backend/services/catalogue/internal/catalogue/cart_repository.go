@@ -13,9 +13,9 @@ import (
 var (
 	errUnknownUser        = errors.New("unknown user")
 	errArticleUnavailable = errors.New("article is not available")
+	errStockExceeded      = errors.New("requested quantity exceeds available stock")
 )
 
-// CartRepository reads and writes carts in PostgreSQL.
 type CartRepository struct {
 	db *pgxpool.Pool
 }
@@ -62,13 +62,25 @@ func (r *CartRepository) addItem(ctx context.Context, userID, articleID, quantit
 		return fmt.Errorf("get cart: %w", err)
 	}
 
+	var inCart int
+	err = tx.QueryRow(ctx, `
+		SELECT COALESCE(SUM(quantity), 0)
+		FROM catalogue.cart_item
+		WHERE cart_id = $1 AND article_id = $2`, cartID, articleID).Scan(&inCart)
+	if err != nil {
+		return fmt.Errorf("check cart quantity: %w", err)
+	}
+	if inCart+quantity > stock {
+		return errStockExceeded
+	}
+
 	_, err = tx.Exec(ctx, `
-    INSERT INTO catalogue.cart_item (cart_id, article_id, quantity, unit_price)
-    SELECT $1::int, article_id, $3::int, price
-    FROM catalogue.article
-    WHERE article_id = $2
-    ON CONFLICT (cart_id, article_id)
-    DO UPDATE SET quantity = catalogue.cart_item.quantity + EXCLUDED.quantity`,
+		INSERT INTO catalogue.cart_item (cart_id, article_id, quantity, unit_price)
+		SELECT $1::int, article_id, $3::int, price
+		FROM catalogue.article
+		WHERE article_id = $2
+		ON CONFLICT (cart_id, article_id)
+		DO UPDATE SET quantity = catalogue.cart_item.quantity + EXCLUDED.quantity`,
 		cartID, articleID, quantity)
 	if err != nil {
 		return fmt.Errorf("save cart item: %w", err)
