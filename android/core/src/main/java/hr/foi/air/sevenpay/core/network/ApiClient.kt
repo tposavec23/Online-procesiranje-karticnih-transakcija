@@ -20,7 +20,11 @@ class ApiClient(
             } else {
                 chain.request()
             }
-            chain.proceed(request)
+            val response = chain.proceed(request)
+            if (response.code() == 401 && token != null) {
+                sessionManager.expire()
+            }
+            response
         }
         .build()
 
