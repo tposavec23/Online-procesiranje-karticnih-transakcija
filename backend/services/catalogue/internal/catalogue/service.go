@@ -8,6 +8,7 @@ import (
 type ArticleStore interface {
 	fetchAll(ctx context.Context, limit, offset int) ([]Article, error)
 	fetchByID(ctx context.Context, id int) (Article, error)
+	fetchAllForExport(ctx context.Context) ([]Article, error)
 	insertMany(ctx context.Context, articles []Article) error
 }
 
@@ -37,4 +38,12 @@ func (s *ArticleService) fetchByID(ctx context.Context, id int) (Article, error)
 		return Article{}, fmt.Errorf("fetch article: %w", err)
 	}
 	return article, nil
+}
+
+func (s *ArticleService) fetchAllForExport(ctx context.Context) ([]Article, error) {
+	articles, err := s.repo.fetchAllForExport(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("fetch articles for export: %w", err)
+	}
+	return articles, nil
 }

@@ -17,6 +17,10 @@ func (f *fakeStore) fetchAll(_ context.Context, _, _ int) ([]Article, error) {
 	return f.saved, nil
 }
 
+func (f *fakeStore) fetchAllForExport(_ context.Context) ([]Article, error) {
+	return f.saved, nil
+}
+
 func (f *fakeStore) fetchByID(_ context.Context, id int) (Article, error) {
 	for _, a := range f.saved {
 		if a.ID == id {
