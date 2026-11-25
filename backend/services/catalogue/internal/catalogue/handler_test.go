@@ -30,7 +30,9 @@ func newImportRequest(t *testing.T, csv string) *http.Request {
 // newTestServer wires the real handler and service to a fake store.
 func newTestServer(store *fakeStore) *http.ServeMux {
 	mux := http.NewServeMux()
-	NewHandler(NewArticleService(store)).RegisterRoutes(mux)
+	svc := NewArticleService(store)
+	NewHandler(svc).RegisterRoutes(mux)
+	NewImportHandler(svc).RegisterRoutes(mux)
 	return mux
 }
 

@@ -24,16 +24,19 @@ func (h *ImportHandler) RegisterRoutes(mux *http.ServeMux) {
 // importArticles reads a CSV from the request body. With ?dryRun=true it only
 // checks the file and saves nothing.
 func (h *ImportHandler) importArticles(w http.ResponseWriter, r *http.Request) {
-	body := http.MaxBytesReader(w, r.Body, maxImportBytes)
+	r.Body = http.MaxBytesReader(w, r.Body, maxImportBytes)
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, "missing CSV file", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
 
-	var (
-		result ImportResult
-		err    error
-	)
+	var result ImportResult
 	if r.URL.Query().Get("dryRun") == "true" {
-		result, err = h.service.previewImport(body)
+		result, err = h.service.previewImport(file)
 	} else {
-		result, err = h.service.importArticles(r.Context(), body)
+		result, err = h.service.importArticles(r.Context(), file)
 	}
 
 	switch {
