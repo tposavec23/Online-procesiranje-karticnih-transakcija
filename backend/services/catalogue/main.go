@@ -36,8 +36,7 @@ func main() {
 	handler := catalogue.NewHandler(svc)
 
 	// Wire the CSV import.
-	importRepo := catalogue.NewImportRepository(db)
-	importHandler := catalogue.NewImportHandler(importRepo)
+	importHandler := catalogue.NewImportHandler(svc)
 
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)

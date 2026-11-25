@@ -8,23 +8,17 @@ import (
 
 const maxImportBytes = 1 << 20 // 1 MB is plenty for a catalogue CSV
 
-// ImportHandler translates the import request into parser and repository calls.
+// ImportHandler translates the import request into article service calls.
 type ImportHandler struct {
-	repo *ImportRepository
+	service *ArticleService
 }
 
-func NewImportHandler(repo *ImportRepository) *ImportHandler {
-	return &ImportHandler{repo: repo}
+func NewImportHandler(service *ArticleService) *ImportHandler {
+	return &ImportHandler{service: service}
 }
 
 func (h *ImportHandler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/articles/import", h.importArticles)
-}
-
-type importResponse struct {
-	Imported int        `json:"imported"`
-	Updated  int        `json:"updated"`
-	Errors   []RowError `json:"errors"`
 }
 
 // importArticles reads a CSV from the request body. With ?dryRun=true it only
@@ -32,33 +26,23 @@ type importResponse struct {
 func (h *ImportHandler) importArticles(w http.ResponseWriter, r *http.Request) {
 	body := http.MaxBytesReader(w, r.Body, maxImportBytes)
 
-	articles, rowErrors, err := parseArticlesCSV(body)
-	if errors.Is(err, errInvalidHeader) {
-		http.Error(w, "invalid CSV header", http.StatusBadRequest)
-		return
-	}
-	if err != nil {
-		log.Printf("parse import: %v", err)
-		http.Error(w, "failed to read file", http.StatusBadRequest)
-		return
-	}
-
-	response := importResponse{Errors: rowErrors}
-
+	var (
+		result ImportResult
+		err    error
+	)
 	if r.URL.Query().Get("dryRun") == "true" {
-		response.Imported = len(articles) // how many would be saved
-		writeJSON(w, response)
-		return
+		result, err = h.service.previewImport(body)
+	} else {
+		result, err = h.service.importArticles(r.Context(), body)
 	}
 
-	result, err := h.repo.saveArticles(r.Context(), articles)
-	if err != nil {
-		log.Printf("save import: %v", err)
-		http.Error(w, "failed to save articles", http.StatusInternalServerError)
-		return
+	switch {
+	case errors.Is(err, errInvalidHeader):
+		http.Error(w, "invalid CSV header", http.StatusBadRequest)
+	case err != nil:
+		log.Printf("import articles: %v", err)
+		http.Error(w, "failed to import articles", http.StatusInternalServerError)
+	default:
+		writeJSON(w, result)
 	}
-
-	response.Imported = result.Imported
-	response.Updated = result.Updated
-	writeJSON(w, response)
 }

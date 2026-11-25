@@ -6,33 +6,15 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// importResult counts what a saved import did.
-type importResult struct {
-	Imported int // new articles
-	Updated  int // existing articles (same code) that were changed
-}
-
-// ImportRepository saves imported articles to PostgreSQL.
-type ImportRepository struct {
-	db *pgxpool.Pool
-}
-
-func NewImportRepository(db *pgxpool.Pool) *ImportRepository {
-	return &ImportRepository{db: db}
-}
-
-// saveArticles stores all articles in one transaction: either every article
-// is saved or none is. An article whose code already exists is updated, and
-// a category that does not exist yet is created.
-func (r *ImportRepository) saveArticles(ctx context.Context, articles []Article) (importResult, error) {
-	var result importResult
-
+// insertMany saves all articles in one transaction: either every article is
+// saved or none is. An article whose code already exists is updated, and a
+// category that does not exist yet is created.
+func (r *ArticleRepository) insertMany(ctx context.Context, articles []Article) error {
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
-		return result, fmt.Errorf("begin transaction: %w", err)
+		return fmt.Errorf("begin transaction: %w", err)
 	}
 	defer tx.Rollback(ctx)
 
@@ -43,13 +25,12 @@ func (r *ImportRepository) saveArticles(ctx context.Context, articles []Article)
 		if !ok {
 			categoryID, err = findOrCreateCategory(ctx, tx, a.Category)
 			if err != nil {
-				return result, err
+				return err
 			}
 			categoryIDs[a.Category] = categoryID
 		}
 
-		var inserted bool
-		err = tx.QueryRow(ctx, `
+		_, err = tx.Exec(ctx, `
 			INSERT INTO catalogue.article (category_id, code, name, description, price, available_quantity)
 			VALUES ($1, $2, $3, NULLIF($4, ''), ($5::bigint)::numeric / 100, $6)
 			ON CONFLICT (code) DO UPDATE SET
@@ -58,24 +39,17 @@ func (r *ImportRepository) saveArticles(ctx context.Context, articles []Article)
 				description        = EXCLUDED.description,
 				price              = EXCLUDED.price,
 				available_quantity = EXCLUDED.available_quantity,
-				updated_at         = CURRENT_TIMESTAMP
-			RETURNING (xmax = 0)`, // xmax = 0 only for a freshly inserted row
-			categoryID, a.Code, a.Name, a.Description, a.Price, a.AvailableQuantity).Scan(&inserted)
+				updated_at         = CURRENT_TIMESTAMP`,
+			categoryID, a.Code, a.Name, a.Description, a.Price, a.AvailableQuantity)
 		if err != nil {
-			return result, fmt.Errorf("save article %s: %w", a.Code, err)
-		}
-
-		if inserted {
-			result.Imported++
-		} else {
-			result.Updated++
+			return fmt.Errorf("save article %s: %w", a.Code, err)
 		}
 	}
 
 	if err := tx.Commit(ctx); err != nil {
-		return result, fmt.Errorf("commit: %w", err)
+		return fmt.Errorf("commit: %w", err)
 	}
-	return result, nil
+	return nil
 }
 
 func findOrCreateCategory(ctx context.Context, tx pgx.Tx, name string) (int, error) {
