@@ -35,8 +35,12 @@ func main() {
 	svc := catalogue.NewArticleService(repo)
 	handler := catalogue.NewHandler(svc)
 
+	// Wire the CSV import.
+	importHandler := catalogue.NewImportHandler(svc)
+
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)
+	importHandler.RegisterRoutes(mux)
 
 	log.Printf("catalogue service listening on port %s", cfg.Port)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, mux))
