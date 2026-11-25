@@ -32,3 +32,11 @@ func (s *ArticleService) fetchByID(ctx context.Context, id int) (Article, error)
 	}
 	return article, nil
 }
+
+func (s *ArticleService) fetchAllForExport(ctx context.Context) ([]Article, error) {
+	articles, err := s.repo.fetchAllForExport(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("fetch articles for export: %w", err)
+	}
+	return articles, nil
+}

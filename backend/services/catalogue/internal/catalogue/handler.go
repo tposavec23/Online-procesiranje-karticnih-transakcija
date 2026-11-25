@@ -24,6 +24,7 @@ func NewHandler(service *ArticleService) *Handler {
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/articles", h.listArticles)
+	mux.HandleFunc("GET /api/articles/export", h.exportArticles)
 	mux.HandleFunc("GET /api/articles/{id}", h.getArticle)
 }
 
@@ -89,5 +90,21 @@ func writeJSON(w http.ResponseWriter, v any) {
 	}
 }
 
+func (h *Handler) exportArticles(w http.ResponseWriter, r *http.Request) {
+	articles, err := h.service.fetchAllForExport(r.Context())
+	if err != nil {
+		log.Printf("export articles: %v", err)
+		http.Error(w, "failed to export articles", http.StatusInternalServerError)
+		return
+	}
+
+	serveExport(w, articles)
+}
+
 func serveExport(w http.ResponseWriter, articles []Article) {
+	w.Header().Set("Content-Type", "text/csv; charset=utf-8")
+	w.Header().Set("Content-Disposition", `attachment; filename="artikli.csv"`)
+	if err := writeExport(w, articles); err != nil {
+		log.Printf("write export: %v", err)
+	}
 }

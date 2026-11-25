@@ -53,6 +53,28 @@ func (r *ArticleRepository) fetchAll(ctx context.Context, limit, offset int) ([]
 	return articles, nil
 }
 
+func (r *ArticleRepository) fetchAllForExport(ctx context.Context) ([]Article, error) {
+	rows, err := r.db.Query(ctx, articleQuery+` ORDER BY a.code`)
+	if err != nil {
+		return nil, fmt.Errorf("query articles for export: %w", err)
+	}
+	defer rows.Close()
+
+	var articles []Article
+	for rows.Next() {
+		a, err := scanArticle(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan article: %w", err)
+		}
+		articles = append(articles, a)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate articles: %w", err)
+	}
+
+	return articles, nil
+}
+
 func (r *ArticleRepository) fetchByID(ctx context.Context, id int) (Article, error) {
 	a, err := scanArticle(r.db.QueryRow(ctx, articleQuery+` WHERE a.article_id = $1`, id))
 	if errors.Is(err, pgx.ErrNoRows) {
