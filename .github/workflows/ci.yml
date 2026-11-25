@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [develop, main]
+    branches: [develop, main, xp-radionica/dev]
 
 permissions:
   contents: read
