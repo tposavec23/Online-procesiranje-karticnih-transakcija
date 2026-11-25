@@ -88,3 +88,6 @@ func writeJSON(w http.ResponseWriter, v any) {
 		log.Printf("encode response: %v", err)
 	}
 }
+
+func serveExport(w http.ResponseWriter, articles []Article) {
+}
