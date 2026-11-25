@@ -24,6 +24,7 @@ import hr.foi.air.sevenpay.navigation.MerchantTab
 import hr.foi.air.sevenpay.ui.catalogue.detail.ArticleDetailRoute
 import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueScreen
 import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueViewModel
+import hr.foi.air.sevenpay.ui.demo.DemoScreen
 import hr.foi.air.sevenpay.ui.login.LoginScreen
 import hr.foi.air.sevenpay.ui.login.LoginViewModel
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
@@ -34,6 +35,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SevenPayTheme {
+                DemoScreen((application as SevenPayApplication).container.catalogueRepository)
+                return@SevenPayTheme
+
                 val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
                 val loginState by loginViewModel.state.collectAsStateWithLifecycle()
 
