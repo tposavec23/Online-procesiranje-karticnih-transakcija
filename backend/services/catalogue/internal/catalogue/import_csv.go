@@ -83,8 +83,6 @@ func isValidHeader(header []string) bool {
 	return true
 }
 
-// parseArticleRecord converts one CSV record to an Article. It returns an
-// empty reason when the row is valid, otherwise the reason it is skipped.
 func parseArticleRecord(record []string) (Article, string) {
 	if len(record) != csvColumnCount {
 		return Article{}, reasonWrongColumnCount
