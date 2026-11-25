@@ -22,3 +22,12 @@ Kriteriji prihvatljivosti:
 - Zadano: u katalogu je 12 artikala. Kada: dodirnem „Pošalji e-poštom”. Tada: otvara se dijeljenje s datotekom artikli.csv od 13 redaka (zaglavlje + 12 artikala).
 - Zadano: otvoreno dijeljenje. Kada: odaberem aplikaciju za e-poštu. Tada: artikli.csv je privitak nove poruke.
 
+## Priča 3: Pregled prije uvoza
+
+Procjena: 2 boda
+
+Kao administrator želim vidjeti što će se uvesti prije spremanja, kako ne bih greškom uvezao krivu datoteku.
+
+Kriteriji prihvatljivosti:
+- Zadano: odabran CSV s 8 artikala. Kada: dodirnem „Pregledaj”. Tada: vidim popis 8 artikala i ništa još nije spremljeno.
+- Zadano: otvoren pregled. Kada: dodirnem „Odustani”. Tada: u bazi nema nijednog novog artikla.
