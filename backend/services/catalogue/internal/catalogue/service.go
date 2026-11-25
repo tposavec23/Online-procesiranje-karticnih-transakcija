@@ -5,12 +5,19 @@ import (
 	"fmt"
 )
 
-// ArticleService fetches catalogue articles.
-type ArticleService struct {
-	repo *ArticleRepository
+type ArticleStore interface {
+	fetchAll(ctx context.Context, limit, offset int) ([]Article, error)
+	fetchByID(ctx context.Context, id int) (Article, error)
+	fetchAllForExport(ctx context.Context) ([]Article, error)
+	insertMany(ctx context.Context, articles []Article) error
 }
 
-func NewArticleService(repo *ArticleRepository) *ArticleService {
+// ArticleService fetches catalogue articles.
+type ArticleService struct {
+	repo ArticleStore
+}
+
+func NewArticleService(repo ArticleStore) *ArticleService {
 	return &ArticleService{repo: repo}
 }
 
