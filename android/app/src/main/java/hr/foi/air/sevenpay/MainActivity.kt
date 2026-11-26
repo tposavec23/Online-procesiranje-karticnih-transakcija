@@ -8,10 +8,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -24,6 +28,7 @@ import hr.foi.air.sevenpay.navigation.BottomNavigationBar
 import hr.foi.air.sevenpay.navigation.MerchantTab
 import hr.foi.air.sevenpay.ui.admin.users.UserListScreen
 import hr.foi.air.sevenpay.ui.admin.users.UserListViewModel
+import hr.foi.air.sevenpay.ui.cart.CartViewModel
 import hr.foi.air.sevenpay.ui.catalogue.detail.ArticleDetailRoute
 import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueScreen
 import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueViewModel
@@ -39,16 +44,20 @@ class MainActivity : ComponentActivity() {
             SevenPayTheme {
                 val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
                 val loginState by loginViewModel.state.collectAsStateWithLifecycle()
+                val user = loginState.loggedInUser
 
-                when (loginState.loggedInUser?.role) {
-                    null -> LoginScreen(
+                if (user == null) {
+                    LoginScreen(
                         state = loginState,
                         onUsernameChange = loginViewModel::onUsernameChange,
                         onPasswordChange = loginViewModel::onPasswordChange,
                         onLoginClick = loginViewModel::login
                     )
-                    Role.MERCHANT -> MerchantHome()
-                    Role.ADMIN -> AdminHome()
+                } else {
+                    when (user.role) {
+                        Role.MERCHANT -> MerchantHome(userId = user.id)
+                        Role.ADMIN -> AdminHome()
+                    }
                 }
             }
         }
@@ -56,7 +65,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun MerchantHome() {
+private fun MerchantHome(userId: Int) {
     var selectedTab by rememberSaveable {
         mutableStateOf(MerchantTab.ARTICLES)
     }
@@ -64,8 +73,21 @@ private fun MerchantHome() {
         mutableStateOf<Int?>(null)
     }
 
+    val cartViewModel: CartViewModel = viewModel(
+        key = "cart-$userId",
+        factory = CartViewModel.factory(userId)
+    )
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(cartViewModel) {
+        cartViewModel.messages.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             BottomNavigationBar(
                 selectedTab = selectedTab,
@@ -89,7 +111,10 @@ private fun MerchantHome() {
                         BackHandler { selectedArticleId = null }
                         ArticleDetailRoute(
                             articleId = articleId,
-                            onBack = { selectedArticleId = null }
+                            onBack = { selectedArticleId = null },
+                            onAddToCart = { article, quantity ->
+                                cartViewModel.addToCart(article, quantity)
+                            }
                         )
                     } else {
                         val catalogueViewModel: CatalogueViewModel = viewModel(factory = CatalogueViewModel.Factory)
@@ -105,6 +130,9 @@ private fun MerchantHome() {
                             },
                             onLoadMore = {
                                 catalogueViewModel.loadMore()
+                            },
+                            onAddToCart = { article ->
+                                cartViewModel.addToCart(article, 1)
                             }
                         )
                     }

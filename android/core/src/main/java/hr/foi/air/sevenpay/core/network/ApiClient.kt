@@ -37,4 +37,6 @@ class ApiClient(
 
     val catalogueApi: CatalogueApi by lazy { retrofit(BuildConfig.CATALOGUE_BASE_URL).create(CatalogueApi::class.java) }
     val accountApi: AccountApi by lazy { retrofit(BuildConfig.ACCOUNT_BASE_URL).create(AccountApi::class.java) }
+
+    val cartApi: CartApi by lazy { retrofit(BuildConfig.CATALOGUE_BASE_URL).create(CartApi::class.java) }
 }

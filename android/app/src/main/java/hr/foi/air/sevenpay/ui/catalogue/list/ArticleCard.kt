@@ -7,10 +7,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,14 +31,16 @@ import hr.foi.air.sevenpay.ui.catalogue.StockChip
 import hr.foi.air.sevenpay.ui.catalogue.formatPrice
 import hr.foi.air.sevenpay.ui.catalogue.sampleArticles
 import hr.foi.air.sevenpay.ui.theme.Border
-import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
+import hr.foi.air.sevenpay.ui.theme.Raspberry
 import hr.foi.air.sevenpay.ui.theme.SecondaryText
+import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
 
 @Composable
 fun ArticleCard(
     article: Article,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddToCart: () -> Unit = {}
 ) {
     Card(
         onClick = onClick,
@@ -68,6 +76,21 @@ fun ArticleCard(
                 )
                 Spacer(Modifier.width(12.dp))
                 StockChip(article.availableQuantity)
+                Spacer(Modifier.weight(1f))
+                FilledIconButton(
+                    onClick = onAddToCart,
+                    enabled = article.availableQuantity > 0,
+                    modifier = Modifier.size(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = Raspberry,
+                        contentColor = Color.White,
+                        disabledContainerColor = Border,
+                        disabledContentColor = SecondaryText
+                    )
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Dodaj u košaricu")
+                }
             }
         }
     }
@@ -78,5 +101,13 @@ fun ArticleCard(
 private fun ArticleCardPreview() {
     SevenPayTheme {
         ArticleCard(article = sampleArticles.first(), onClick = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ArticleCardUnavailablePreview() {
+    SevenPayTheme {
+        ArticleCard(article = sampleArticles[2], onClick = {})
     }
 }
