@@ -32,16 +32,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.foi.air.sevenpay.core.model.Role
 import hr.foi.air.sevenpay.core.model.User
 import hr.foi.air.sevenpay.ui.theme.Border
+import hr.foi.air.sevenpay.ui.theme.DeactivatedRed
+import hr.foi.air.sevenpay.ui.theme.InStockText
 import hr.foi.air.sevenpay.ui.theme.LightRose
 import hr.foi.air.sevenpay.ui.theme.Raspberry
 import hr.foi.air.sevenpay.ui.theme.SecondaryText
-import hr.foi.air.sevenpay.ui.theme.InStockBackground
-import hr.foi.air.sevenpay.ui.theme.InStockText
+import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
 import hr.foi.air.sevenpay.ui.theme.UnavailableBackground
 import hr.foi.air.sevenpay.ui.theme.UnavailableText
 
@@ -103,7 +105,9 @@ private fun UserRow(user: User) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(
+            containerColor = if (user.active) Color.White else UnavailableBackground.copy(alpha = 0.3f)
+        ),
         border = BorderStroke(1.dp, Border)
     ) {
         Row(
@@ -116,7 +120,8 @@ private fun UserRow(user: User) {
                 Text(
                     text = "${user.firstName} ${user.lastName}",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (user.active) Color.Unspecified else UnavailableText
                 )
                 Text(
                     text = user.username,
@@ -124,9 +129,12 @@ private fun UserRow(user: User) {
                     color = SecondaryText
                 )
                 Spacer(modifier = Modifier.height(6.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     RoleChip(user.role)
-                    StatusChip(user.active)
+                    StatusLabel(user.active)
                 }
             }
             Icon(
@@ -144,31 +152,34 @@ private fun RoleChip(role: Role) {
     Text(
         text = if (isAdmin) "Administrator" else "Trgovac",
         fontSize = 12.sp,
-        fontWeight = FontWeight.SemiBold,
-        color = if (isAdmin) Color.White else Raspberry,
+        fontWeight = FontWeight.Medium,
+        color = if (isAdmin) Raspberry else SecondaryText,
         modifier = Modifier
             .background(
-                color = if (isAdmin) Raspberry else LightRose,
-                shape = RoundedCornerShape(8.dp)
+                color = if (isAdmin) LightRose else UnavailableBackground.copy(alpha = 0.6f),
+                shape = RoundedCornerShape(6.dp)
             )
             .padding(horizontal = 8.dp, vertical = 2.dp)
     )
 }
 
 @Composable
-private fun StatusChip(active: Boolean) {
-    Text(
-        text = if (active) "Aktivan" else "Deaktiviran",
-        fontSize = 12.sp,
-        fontWeight = FontWeight.SemiBold,
-        color = if (active) InStockText else UnavailableText,
-        modifier = Modifier
-            .background(
-                color = if (active) InStockBackground else UnavailableBackground,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(horizontal = 8.dp, vertical = 2.dp)
-    )
+private fun StatusLabel(active: Boolean) {
+    val color = if (active) InStockText else DeactivatedRed
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .background(color = color, shape = CircleShape)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = if (active) "Aktivan" else "Deaktiviran",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            color = color
+        )
+    }
 }
 
 @Composable
@@ -177,14 +188,34 @@ private fun UserAvatar(user: User) {
     Box(
         modifier = Modifier
             .size(44.dp)
-            .background(color = LightRose, shape = CircleShape),
+            .background(
+                color = if (user.active) LightRose else UnavailableBackground,
+                shape = CircleShape
+            ),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = initials.uppercase(),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = Raspberry
+            color = if (user.active) Raspberry else UnavailableText
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun UserListScreenPreview() {
+    SevenPayTheme {
+        UserListScreen(
+            state = UserListUiState.Success(
+                listOf(
+                    User(1, "Marko", "Markić", "admin", Role.ADMIN, true),
+                    User(2, "Ana", "Kovač", "akovac", Role.MERCHANT, true),
+                    User(3, "Ivan", "Horvat", "ihorvat", Role.MERCHANT, false)
+                )
+            ),
+            onRetry = {}
         )
     }
 }
