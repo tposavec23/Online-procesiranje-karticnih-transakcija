@@ -1,5 +1,7 @@
 CREATE TABLE account.users (
     user_id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    first_name varchar(50) NOT NULL,
+    last_name varchar(50) NOT NULL,
     username varchar(50) NOT NULL UNIQUE,
     password_hash varchar(100) NOT NULL,
     role varchar(20) NOT NULL CHECK (role IN ('MERCHANT', 'ADMIN')),

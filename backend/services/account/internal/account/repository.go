@@ -22,10 +22,10 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 func (r *UserRepository) findByUsername(ctx context.Context, username string) (User, error) {
 	var u User
 	err := r.db.QueryRow(ctx, `
-		SELECT user_id, username, password_hash, role, active
+		SELECT user_id, first_name, last_name, username, password_hash, role, active
 		FROM account.users
 		WHERE username = $1`, username).
-		Scan(&u.ID, &u.Username, &u.PasswordHash, &u.Role, &u.Active)
+		Scan(&u.ID, &u.FirstName, &u.LastName, &u.Username, &u.PasswordHash, &u.Role, &u.Active)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		return User{}, errUserNotFound
@@ -38,7 +38,7 @@ func (r *UserRepository) findByUsername(ctx context.Context, username string) (U
 
 func (r *UserRepository) findAll(ctx context.Context) ([]User, error) {
 	rows, err := r.db.Query(ctx, `
-		SELECT user_id, username, role, active
+		SELECT user_id, first_name, last_name, username, role, active
 		FROM account.users
 		ORDER BY username`)
 	if err != nil {
@@ -49,7 +49,7 @@ func (r *UserRepository) findAll(ctx context.Context) ([]User, error) {
 	users := make([]User, 0)
 	for rows.Next() {
 		var u User
-		if err := rows.Scan(&u.ID, &u.Username, &u.Role, &u.Active); err != nil {
+		if err := rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Username, &u.Role, &u.Active); err != nil {
 			return nil, fmt.Errorf("scan user: %w", err)
 		}
 		users = append(users, u)
