@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import hr.foi.air.sevenpay.SevenPayApplication
 import hr.foi.air.sevenpay.core.data.AccountRepository
+import hr.foi.air.sevenpay.core.data.SessionManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,11 +17,22 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginUiState())
     val state: StateFlow<LoginUiState> = _state.asStateFlow()
+
+    init {
+        sessionManager.onSessionExpired = {
+            _state.update { LoginUiState(errorMessage = LoginErrorMessages.SESSION_EXPIRED) }
+        }
+    }
+
+    override fun onCleared() {
+        sessionManager.onSessionExpired = null
+    }
 
     fun onUsernameChange(value: String) {
         _state.update { it.copy(username = value, errorMessage = null) }
@@ -54,7 +66,7 @@ class LoginViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[APPLICATION_KEY] as SevenPayApplication
-                LoginViewModel(application.container.accountRepository)
+                LoginViewModel(application.container.accountRepository, application.container.sessionManager)
             }
         }
     }

@@ -18,13 +18,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.core.model.Role
+import hr.foi.air.sevenpay.navigation.AdminBottomNavigationBar
+import hr.foi.air.sevenpay.navigation.AdminTab
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
 import hr.foi.air.sevenpay.navigation.MerchantTab
+import hr.foi.air.sevenpay.ui.admin.users.UserListScreen
+import hr.foi.air.sevenpay.ui.admin.users.UserListViewModel
 import hr.foi.air.sevenpay.ui.cart.CartViewModel
 import hr.foi.air.sevenpay.ui.catalogue.detail.ArticleDetailRoute
 import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueScreen
@@ -140,13 +143,38 @@ private fun MerchantHome(userId: Int) {
     }
 }
 
-// Placeholder until the administrator screens are defined.
 @Composable
 private fun AdminHome() {
-    Box(
+    var selectedTab by rememberSaveable {
+        mutableStateOf(AdminTab.USERS)
+    }
+
+    Scaffold(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Administrator")
+        bottomBar = {
+            AdminBottomNavigationBar(
+                selectedTab = selectedTab,
+                onTabSelected = { selectedTab = it }
+            )
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            when (selectedTab) {
+                AdminTab.USERS -> {
+                    val userListViewModel: UserListViewModel = viewModel(factory = UserListViewModel.Factory)
+                    val state by userListViewModel.state.collectAsStateWithLifecycle()
+
+                    UserListScreen(
+                        state = state,
+                        onRetry = userListViewModel::loadUsers
+                    )
+                }
+                AdminTab.ARTICLES, AdminTab.CATEGORIES, AdminTab.ACCOUNT -> Text(selectedTab.title)
+            }
+        }
     }
 }

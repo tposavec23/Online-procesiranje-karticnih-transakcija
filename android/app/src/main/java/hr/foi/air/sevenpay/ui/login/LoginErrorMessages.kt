@@ -8,6 +8,7 @@ object LoginErrorMessages {
     const val INVALID_CREDENTIALS = "Pogrešno korisničko ime ili lozinka. Pokušaj ponovno."
     const val NO_CONNECTION = "Prijava trenutno nije moguća. Provjeri internetsku vezu i pokušaj ponovno."
     const val UNKNOWN = "Došlo je do pogreške pri prijavi. Pokušaj ponovno."
+    const val SESSION_EXPIRED = "Sesija je istekla. Prijavi se ponovno."
 
     // Maps an error thrown by AccountRepository to the message the user should see.
     fun from(error: Throwable): String = when (error) {
