@@ -32,7 +32,8 @@ func main() {
 	repo := account.NewUserRepository(db)
 	auth := account.NewAuthService(repo)
 	tokens := account.NewTokenService(cfg.JWTSecret)
-	handler := account.NewHandler(auth, tokens)
+	users := account.NewUserService(repo)
+	handler := account.NewHandler(auth, tokens, users)
 
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)

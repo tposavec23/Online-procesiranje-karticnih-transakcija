@@ -20,14 +20,16 @@ type loginResponse struct {
 type Handler struct {
 	auth   *AuthService
 	tokens *TokenService
+	users  *UserService
 }
 
-func NewHandler(auth *AuthService, tokens *TokenService) *Handler {
-	return &Handler{auth: auth, tokens: tokens}
+func NewHandler(auth *AuthService, tokens *TokenService, users *UserService) *Handler {
+	return &Handler{auth: auth, tokens: tokens, users: users}
 }
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/auth/login", h.login)
+	mux.HandleFunc("GET /api/users", h.listUsers)
 }
 
 func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +64,17 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusOK, loginResponse{Token: token, User: user})
+}
+
+func (h *Handler) listUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.users.listUsers(r.Context())
+	if err != nil {
+		log.Printf("list users: %v", err)
+		writeError(w, http.StatusInternalServerError, "failed to load users")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, users)
 }
 
 func writeJSON(w http.ResponseWriter, status int, data any) {

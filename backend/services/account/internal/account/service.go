@@ -39,3 +39,15 @@ func (s *AuthService) login(ctx context.Context, username, password string) (Use
 
 	return u, nil
 }
+
+type UserService struct {
+	repo *UserRepository
+}
+
+func NewUserService(repo *UserRepository) *UserService {
+	return &UserService{repo: repo}
+}
+
+func (s *UserService) listUsers(ctx context.Context) ([]User, error) {
+	return s.repo.findAll(ctx)
+}
