@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import hr.foi.air.sevenpay.core.model.Article
 import hr.foi.air.sevenpay.ui.theme.CreamBackground
 import hr.foi.air.sevenpay.ui.theme.Raspberry
 
@@ -17,7 +18,8 @@ import hr.foi.air.sevenpay.ui.theme.Raspberry
 fun ArticleDetailRoute(
     articleId: Int,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddToCart: (article: Article, quantity: Int) -> Unit = { _, _ ->}
 ) {
     val viewModel: ArticleDetailViewModel = viewModel(
         key = "article-$articleId",
@@ -38,7 +40,8 @@ fun ArticleDetailRoute(
         is ArticleDetailUiState.Success -> ArticleDetailScreen(
             article = current.article,
             onBack = onBack,
-            modifier = modifier
+            modifier = modifier,
+            onAddToCart = { quantity -> onAddToCart(current.article, quantity)}
         )
 
         ArticleDetailUiState.NotFound -> ArticleDetailMessage(

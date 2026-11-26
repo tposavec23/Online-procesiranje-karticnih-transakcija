@@ -18,15 +18,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BakeryDining
 import androidx.compose.material.icons.filled.Cake
 import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,87 +68,183 @@ private fun categoryIcon(category: String): ImageVector = when (category) {
 fun ArticleDetailScreen(
     article: Article,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddToCart: (quantity: Int) -> Unit = {}
 ) {
+    var quantity by rememberSaveable(article.id) { mutableIntStateOf(1) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(CreamBackground)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
     ) {
-        Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(
-                onClick = onBack,
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+        ) {
+            Spacer(Modifier.height(16.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(
+                    onClick = onBack,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(Color.White, RoundedCornerShape(12.dp))
+                        .border(1.dp, Border, RoundedCornerShape(12.dp))
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Natrag na popis artikala"
+                    )
+                }
+                Spacer(Modifier.width(12.dp))
+                Text("Detalji artikla", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(16.dp))
+
+            Box(
                 modifier = Modifier
-                    .size(44.dp)
-                    .background(Color.White, RoundedCornerShape(12.dp))
-                    .border(1.dp, Border, RoundedCornerShape(12.dp))
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .background(HeroPeach, RoundedCornerShape(24.dp)),
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Natrag na popis artikala"
+                    imageVector = categoryIcon(article.category),
+                    contentDescription = article.category,
+                    tint = Raspberry,
+                    modifier = Modifier.size(72.dp)
                 )
             }
-            Spacer(Modifier.width(12.dp))
-            Text("Detalji artikla", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        }
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
-                .background(HeroPeach, RoundedCornerShape(24.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = categoryIcon(article.category),
-                contentDescription = article.category,
-                tint = Raspberry,
-                modifier = Modifier.size(72.dp)
-            )
-        }
-        Spacer(Modifier.height(16.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = article.code,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = SecondaryText
+                )
+                Spacer(Modifier.width(8.dp))
+                CategoryTag(article.category)
+            }
+            Spacer(Modifier.height(4.dp))
+            Text(article.name, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = formatPrice(article.price),
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.width(12.dp))
+                StockChip(article.availableQuantity)
+            }
+            Spacer(Modifier.height(16.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = article.code,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = SecondaryText
-            )
-            Spacer(Modifier.width(8.dp))
-            CategoryTag(article.category)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                border = BorderStroke(1.dp, Border)
+            ) {
+                Column(Modifier.padding(16.dp)) {
+                    Text("Opis", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(4.dp))
+                    Text(article.description, fontSize = 14.sp, color = PrimaryText)
+                }
+            }
+            Spacer(Modifier.height(16.dp))
         }
-        Spacer(Modifier.height(4.dp))
-        Text(article.name, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = formatPrice(article.price),
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.width(12.dp))
-            StockChip(article.availableQuantity)
-        }
-        Spacer(Modifier.height(16.dp))
 
-        Card(
+        AddToCartBar(
+            article = article,
+            quantity = quantity,
+            onQuantityChange = { quantity = it },
+            onAddToCart = { onAddToCart(quantity) }
+        )
+    }
+}
+
+@Composable
+private fun AddToCartBar(
+    article: Article,
+    quantity: Int,
+    onQuantityChange: (Int) -> Unit,
+    onAddToCart: () -> Unit
+) {
+    val available = article.availableQuantity > 0
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(CreamBackground)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            border = BorderStroke(1.dp, Border)
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(Modifier.padding(16.dp)) {
-                Text("Opis", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(4.dp))
-                Text(article.description, fontSize = 14.sp, color = PrimaryText)
+            Text("Količina", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            Spacer(Modifier.weight(1f))
+            Row(
+                modifier = Modifier
+                    .background(Color.White, RoundedCornerShape(12.dp))
+                    .border(1.dp, Border, RoundedCornerShape(12.dp)),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = { onQuantityChange(quantity - 1) },
+                    enabled = available && quantity > 1
+                ) {
+                    Icon(Icons.Filled.Remove, contentDescription = "Smanji količinu")
+                }
+                Text(
+                    text = quantity.toString(),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.width(32.dp),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+                IconButton(
+                    onClick = { onQuantityChange(quantity + 1) },
+                    enabled = available && quantity < article.availableQuantity
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Povećaj količinu")
+                }
             }
         }
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
+        Button(
+            onClick = onAddToCart,
+            enabled = available,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Raspberry,
+                contentColor = Color.White,
+                disabledContainerColor = Border,
+                disabledContentColor = SecondaryText
+            )
+        ) {
+            if (available) {
+                Icon(
+                    Icons.Outlined.ShoppingCart,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    "Dodaj u košaricu · ${formatPrice(article.price * quantity)}",
+                    fontWeight = FontWeight.Bold
+                )
+            } else {
+                Text("Nedostupno", fontWeight = FontWeight.Bold)
+            }
+        }
     }
 }
 
