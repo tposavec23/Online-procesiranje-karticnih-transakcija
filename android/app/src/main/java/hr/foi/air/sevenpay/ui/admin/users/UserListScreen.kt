@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -72,6 +73,33 @@ fun UserListScreen(
             Button(onClick = onRetry) {
                 Text("Pokušaj ponovno")
             }
+        }
+
+        UserListUiState.Empty -> Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Group,
+                contentDescription = null,
+                tint = SecondaryText,
+                modifier = Modifier.size(48.dp)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Nema korisničkih računa",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = "U sustavu još nema nijednog korisničkog računa.",
+                fontSize = 14.sp,
+                color = SecondaryText,
+                textAlign = TextAlign.Center
+            )
         }
 
         is UserListUiState.Success -> LazyColumn(
@@ -217,5 +245,13 @@ private fun UserListScreenPreview() {
             ),
             onRetry = {}
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun UserListScreenEmptyPreview() {
+    SevenPayTheme {
+        UserListScreen(state = UserListUiState.Empty, onRetry = {})
     }
 }

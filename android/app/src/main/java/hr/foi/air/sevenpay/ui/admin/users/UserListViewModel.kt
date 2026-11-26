@@ -29,7 +29,8 @@ class UserListViewModel(
         viewModelScope.launch {
             _state.value = UserListUiState.Loading
             _state.value = try {
-                UserListUiState.Success(accountRepository.getUsers())
+                val users = accountRepository.getUsers()
+                if (users.isEmpty()) UserListUiState.Empty else UserListUiState.Success(users)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
