@@ -40,6 +40,10 @@ import hr.foi.air.sevenpay.ui.theme.Border
 import hr.foi.air.sevenpay.ui.theme.LightRose
 import hr.foi.air.sevenpay.ui.theme.Raspberry
 import hr.foi.air.sevenpay.ui.theme.SecondaryText
+import hr.foi.air.sevenpay.ui.theme.InStockBackground
+import hr.foi.air.sevenpay.ui.theme.InStockText
+import hr.foi.air.sevenpay.ui.theme.UnavailableBackground
+import hr.foi.air.sevenpay.ui.theme.UnavailableText
 
 @Composable
 fun UserListScreen(
@@ -120,7 +124,10 @@ private fun UserRow(user: User) {
                     color = SecondaryText
                 )
                 Spacer(modifier = Modifier.height(6.dp))
-                RoleChip(user.role)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    RoleChip(user.role)
+                    StatusChip(user.active)
+                }
             }
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -142,6 +149,22 @@ private fun RoleChip(role: Role) {
         modifier = Modifier
             .background(
                 color = if (isAdmin) Raspberry else LightRose,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = 8.dp, vertical = 2.dp)
+    )
+}
+
+@Composable
+private fun StatusChip(active: Boolean) {
+    Text(
+        text = if (active) "Aktivan" else "Deaktiviran",
+        fontSize = 12.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = if (active) InStockText else UnavailableText,
+        modifier = Modifier
+            .background(
+                color = if (active) InStockBackground else UnavailableBackground,
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(horizontal = 8.dp, vertical = 2.dp)
