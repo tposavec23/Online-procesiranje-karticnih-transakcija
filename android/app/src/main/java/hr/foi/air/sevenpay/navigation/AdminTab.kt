@@ -1,3 +1,5 @@
+package hr.foi.air.sevenpay.navigation
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Category

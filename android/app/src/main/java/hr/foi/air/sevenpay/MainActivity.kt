@@ -1,6 +1,5 @@
 package hr.foi.air.sevenpay
 
-import AdminBottomNavigationBar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -19,16 +18,18 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import hr.foi.air.sevenpay.core.model.Role
+import hr.foi.air.sevenpay.navigation.AdminBottomNavigationBar
+import hr.foi.air.sevenpay.navigation.AdminTab
 import hr.foi.air.sevenpay.navigation.BottomNavigationBar
 import hr.foi.air.sevenpay.navigation.MerchantTab
+import hr.foi.air.sevenpay.ui.admin.users.UserListScreen
+import hr.foi.air.sevenpay.ui.admin.users.UserListViewModel
 import hr.foi.air.sevenpay.ui.catalogue.detail.ArticleDetailRoute
 import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueScreen
 import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueViewModel
 import hr.foi.air.sevenpay.ui.login.LoginScreen
 import hr.foi.air.sevenpay.ui.login.LoginViewModel
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
-import hr.foi.air.sevenpay.ui.admin.users.UserListScreen
-import hr.foi.air.sevenpay.ui.admin.users.UserListViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
