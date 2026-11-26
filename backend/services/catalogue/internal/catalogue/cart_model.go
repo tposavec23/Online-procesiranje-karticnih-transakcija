@@ -1,5 +1,6 @@
 package catalogue
 
+// CartItem is one article in a cart. Prices are in cents.
 type CartItem struct {
 	ArticleID  int    `json:"articleId"`
 	Code       string `json:"code"`
@@ -9,8 +10,8 @@ type CartItem struct {
 	TotalPrice int64  `json:"totalPrice"`
 }
 
+// Cart is the cart of one user. TotalPrice is in cents.
 type Cart struct {
-	ID         int        `json:"id"`
 	Items      []CartItem `json:"items"`
 	TotalPrice int64      `json:"totalPrice"`
 }

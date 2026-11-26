@@ -67,8 +67,6 @@ func (h *CartHandler) addItem(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "article is not available", http.StatusConflict)
 	case errors.Is(err, errStockExceeded):
 		http.Error(w, "requested quantity exceeds available stock", http.StatusConflict)
-	case errors.Is(err, errUnknownUser):
-		http.Error(w, "unknown user", http.StatusUnauthorized)
 	case err != nil:
 		log.Printf("add item to cart: %v", err)
 		http.Error(w, "failed to add item to cart", http.StatusInternalServerError)

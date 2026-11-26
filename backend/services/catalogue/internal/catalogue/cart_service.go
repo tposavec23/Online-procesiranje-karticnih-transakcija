@@ -30,7 +30,7 @@ func (s *CartService) addItem(ctx context.Context, userID, articleID, quantity i
 
 // fetchCart returns the active cart with item and cart totals (in cents).
 func (s *CartService) fetchCart(ctx context.Context, userID int) (Cart, error) {
-	cart, err := s.repo.fetchActive(ctx, userID)
+	cart, err := s.repo.fetchByUser(ctx, userID)
 	if err != nil {
 		return Cart{}, fmt.Errorf("fetch cart: %w", err)
 	}
