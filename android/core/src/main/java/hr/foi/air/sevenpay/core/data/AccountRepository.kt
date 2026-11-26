@@ -8,6 +8,7 @@ import retrofit2.HttpException
 
 interface AccountRepository {
     suspend fun login(username: String, password: String): User
+    suspend fun getUsers(): List<User>
 }
 
 class NetworkAccountRepository(
@@ -25,4 +26,5 @@ class NetworkAccountRepository(
             throw e
         }
     }
+    override suspend fun getUsers(): List<User> = api.getUsers()
 }

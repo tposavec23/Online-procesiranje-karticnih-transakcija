@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,6 +26,8 @@ import hr.foi.air.sevenpay.ui.catalogue.list.CatalogueViewModel
 import hr.foi.air.sevenpay.ui.login.LoginScreen
 import hr.foi.air.sevenpay.ui.login.LoginViewModel
 import hr.foi.air.sevenpay.ui.theme.SevenPayTheme
+import hr.foi.air.sevenpay.ui.admin.users.UserListScreen
+import hr.foi.air.sevenpay.ui.admin.users.UserListViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,13 +113,22 @@ private fun MerchantHome() {
     }
 }
 
-// Placeholder until the administrator screens are defined.
+// Temporarily shows the user list directly; the admin home screen comes in WBL-132.
 @Composable
 private fun AdminHome() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Administrator")
+    val userListViewModel: UserListViewModel = viewModel(factory = UserListViewModel.Factory)
+    val state by userListViewModel.state.collectAsStateWithLifecycle()
+
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            UserListScreen(
+                state = state,
+                onRetry = userListViewModel::loadUsers
+            )
+        }
     }
 }
