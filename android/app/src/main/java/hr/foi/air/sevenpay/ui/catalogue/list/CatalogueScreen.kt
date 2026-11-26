@@ -38,7 +38,8 @@ fun CatalogueScreen(
     onArticleClick: (Article) -> Unit,
     onRetry: () -> Unit,
     onLoadMore: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddToCart : (Article) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -94,7 +95,8 @@ fun CatalogueScreen(
                     items(state.articles, key = { it.id }) { article ->
                         ArticleCard(
                             article = article,
-                            onClick = { onArticleClick(article) }
+                            onClick = { onArticleClick(article) },
+                            onAddToCart = {onAddToCart(article)}
                         )
                     }
                     if (state.hasMore) {
