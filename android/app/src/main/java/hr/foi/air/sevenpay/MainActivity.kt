@@ -1,5 +1,6 @@
 package hr.foi.air.sevenpay
 
+import AdminBottomNavigationBar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -113,22 +114,38 @@ private fun MerchantHome() {
     }
 }
 
-// Temporarily shows the user list directly; the admin home screen comes in WBL-132.
 @Composable
 private fun AdminHome() {
-    val userListViewModel: UserListViewModel = viewModel(factory = UserListViewModel.Factory)
-    val state by userListViewModel.state.collectAsStateWithLifecycle()
+    var selectedTab by rememberSaveable {
+        mutableStateOf(AdminTab.USERS)
+    }
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            AdminBottomNavigationBar(
+                selectedTab = selectedTab,
+                onTabSelected = { selectedTab = it }
+            )
+        }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            UserListScreen(
-                state = state,
-                onRetry = userListViewModel::loadUsers
-            )
+            when (selectedTab) {
+                AdminTab.USERS -> {
+                    val userListViewModel: UserListViewModel = viewModel(factory = UserListViewModel.Factory)
+                    val state by userListViewModel.state.collectAsStateWithLifecycle()
+
+                    UserListScreen(
+                        state = state,
+                        onRetry = userListViewModel::loadUsers
+                    )
+                }
+                AdminTab.ARTICLES, AdminTab.CATEGORIES, AdminTab.ACCOUNT -> Text(selectedTab.title)
+            }
         }
     }
 }
