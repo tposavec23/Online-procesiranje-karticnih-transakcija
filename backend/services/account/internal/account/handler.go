@@ -29,7 +29,7 @@ func NewHandler(auth *AuthService, tokens *TokenService, users *UserService) *Ha
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/auth/login", h.login)
-	mux.HandleFunc("GET /api/users", h.listUsers)
+	mux.HandleFunc("GET /api/users", h.requireAdmin(h.listUsers))
 }
 
 func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
