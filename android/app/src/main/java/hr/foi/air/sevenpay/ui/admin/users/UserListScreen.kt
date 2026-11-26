@@ -66,8 +66,9 @@ fun UserListScreen(
 private fun UserRow(user: User) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = user.username, style = MaterialTheme.typography.titleMedium)
-            Text(text = user.role.name, style = MaterialTheme.typography.bodyMedium)
+            Text(text = "${user.firstName} ${user.lastName}", style = MaterialTheme.typography.titleMedium)
+            Text(text = user.username, style = MaterialTheme.typography.bodyMedium)
+            Text(text = user.role.name, style = MaterialTheme.typography.bodySmall)
         }
     }
 }
